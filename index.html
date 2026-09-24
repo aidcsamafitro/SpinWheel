@@ -389,49 +389,48 @@
       }
     }
 
-    // Logika Pemilihan Hadiah (Berbobot berdasarkan Qty & Grand Prize tiap kelipatan 50)
+    // Logika Pemilihan Hadiah Sesuai Urutan
     function getPrizeIndex() {
       totalSpins++;
       spinCountDisplay.innerText = totalSpins;
 
-      // Kelipatan 50 Spin = Grand Prize (Earset Lenovo -> Index 2)
-      if (totalSpins % 50 === 0 && prizes[2].qty > 0) {
+      // 1. Grand Prize (Earset Lenovo = Index 2) Dapatkan HANYA pada Spin ke-55, 105, 155, dst.
+      if (totalSpins >= 55 && (totalSpins - 55) % 50 === 0 && prizes[2].qty > 0) {
         prizes[2].qty--;
         return 2;
       }
 
-      // Filter daftar hadiah biasa (selain Grand Prize index 2) yang masih memiliki stok
-      const regularIndices = [0, 1, 3, 4, 5, 6].filter(i => prizes[i].qty > 0);
+      // 2. Putaran Biasa (Spin 1-54, 56-104, dst.): Dominan Keychain (Index 0) & Keychain Botol (Index 1)
+      const isKeychainAvailable = prizes[0].qty > 0 || prizes[1].qty > 0;
       
-      if (regularIndices.length === 0) {
-        // Jika hadiah biasa habis, ambil dari sisa semua stok yang ada
-        const remainingIndices = prizes.map((p, i) => p.qty > 0 ? i : -1).filter(i => i !== -1);
-        if (remainingIndices.length === 0) return -1; // Stok Habis Total
-        const randomIndex = Math.floor(Math.random() * remainingIndices.length);
-        const chosen = remainingIndices[randomIndex];
+      // 90% Peluang untuk Keychain & Keychain Botol
+      const chooseKeychain = Math.random() < 0.90;
+
+      if (chooseKeychain && isKeychainAvailable) {
+        const keychains = [];
+        if (prizes[0].qty > 0) keychains.push(0);
+        if (prizes[1].qty > 0) keychains.push(1);
+        
+        const chosen = keychains[Math.floor(Math.random() * keychains.length)];
         prizes[chosen].qty--;
         return chosen;
       }
 
-      // Hitung total bobot stok dari hadiah biasa yang tersisa
-      const totalWeight = regularIndices.reduce((sum, idx) => sum + prizes[idx].qty, 0);
-      
-      // Pilih angka acak berdasarkan total bobot
-      let randomWeight = Math.random() * totalWeight;
-
-      // Pilih indeks berdasarkan proporsi ketersediaan stok
-      for (let i of regularIndices) {
-        if (randomWeight < prizes[i].qty) {
-          prizes[i].qty--;
-          return i;
-        }
-        randomWeight -= prizes[i].qty;
+      // 3. 10% Peluang (atau jika Keychain habis): Ambil hadiah biasa lainnya (Index 3, 4, 5, 6)
+      const otherIndices = [3, 4, 5, 6].filter(i => prizes[i].qty > 0);
+      if (otherIndices.length > 0) {
+        const chosen = otherIndices[Math.floor(Math.random() * otherIndices.length)];
+        prizes[chosen].qty--;
+        return chosen;
       }
 
-      // Fallback
-      const fallbackIndex = regularIndices[0];
-      prizes[fallbackIndex].qty--;
-      return fallbackIndex;
+      // Fallback jika pilihan lain habis: Ambil stok apapun yang tersisa
+      const remainingIndices = prizes.map((p, i) => p.qty > 0 ? i : -1).filter(i => i !== -1);
+      if (remainingIndices.length === 0) return -1; // Stok Habis
+
+      const chosen = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
+      prizes[chosen].qty--;
+      return chosen;
     }
 
     // Fungsi Spin
@@ -456,7 +455,6 @@
         playTickSound();
       }, 150);
 
-      // Kurangi frekuensi suara secara perlahan
       setTimeout(() => {
         clearInterval(soundInterval);
         soundInterval = setInterval(() => { playTickSound(); }, 300);
