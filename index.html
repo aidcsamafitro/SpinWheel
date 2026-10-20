@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jakarta Running Festival - Spin & Win</title>
+
   <style>
     :root {
       --jrf-navy: #0B192C;
@@ -35,7 +37,7 @@
     body::before {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      inset: 0;
       background: repeating-linear-gradient(
         45deg,
         transparent,
@@ -98,7 +100,7 @@
       font-weight: 900;
       text-transform: uppercase;
       color: #ffffff;
-      text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
       line-height: 1.1;
     }
 
@@ -124,7 +126,9 @@
       padding: 12px;
       background: linear-gradient(145deg, var(--jrf-orange), #ff8533);
       border-radius: 50%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 101, 0, 0.4);
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(255, 101, 0, 0.4);
     }
 
     .wheel-container {
@@ -143,11 +147,12 @@
       border-left: 18px solid transparent;
       border-right: 18px solid transparent;
       border-top: 32px solid #ffffff;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
       z-index: 10;
     }
 
     canvas {
+      display: block;
       border-radius: 50%;
       transition: transform 5s cubic-bezier(0.15, 0.99, 0.35, 1);
     }
@@ -163,7 +168,8 @@
       border: 4px solid var(--jrf-gold);
       border-radius: 50%;
       z-index: 5;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
     }
 
     .spin-btn {
@@ -197,16 +203,18 @@
     /* MODAL OVERLAY HADIAH */
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(11, 25, 44, 0.85);
+      inset: 0;
+      background: rgba(11, 25, 44, 0.88);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 12px;
       z-index: 100;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.4s ease;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      overflow-y: auto;
     }
 
     .modal-overlay.active {
@@ -214,15 +222,20 @@
       visibility: visible;
     }
 
+    /* POP-UP HADIAH DIPERBESAR */
     .modal-content {
       background: linear-gradient(135deg, #1E3E62 0%, #0B192C 100%);
       border: 3px solid var(--jrf-orange);
       border-radius: 24px;
-      padding: 30px;
+      padding: 24px;
       text-align: center;
-      max-width: 90%;
-      width: 420px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 30px rgba(255, 101, 0, 0.3);
+      width: 100%;
+      max-width: 500px;
+      max-height: calc(100vh - 24px);
+      overflow-y: auto;
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.7),
+        0 0 30px rgba(255, 101, 0, 0.3);
       transform: scale(0.3);
       transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
@@ -231,42 +244,47 @@
       transform: scale(1);
     }
 
+    /* AREA GAMBAR: SEBELUMNYA 160x160, SEKARANG 320x320 */
     .prize-img-container {
-      width: 160px;
-      height: 160px;
-      margin: 10px auto 15px auto;
+      width: 320px;
+      height: 320px;
+      max-width: 100%;
+      margin: 15px auto 18px;
       border-radius: 20px;
       border: 3px solid var(--jrf-gold);
       overflow: hidden;
       background: #0B192C;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .prize-img-container img {
+      display: block;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      padding: 5px;
     }
 
     .modal-title {
       font-size: 1rem;
       letter-spacing: 2px;
-      color: #aaa;
+      color: #ddd;
       text-transform: uppercase;
       margin-bottom: 5px;
     }
 
     .prize-name {
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 900;
       color: var(--jrf-gold);
       text-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
       margin: 10px 0;
       text-transform: uppercase;
       line-height: 1.2;
+      overflow-wrap: anywhere;
     }
 
     .close-btn {
@@ -296,7 +314,7 @@
       width: 95%;
       max-height: 85vh;
       overflow-y: auto;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
       position: relative;
     }
 
@@ -304,6 +322,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
       margin-bottom: 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding-bottom: 10px;
@@ -351,6 +370,7 @@
       color: #fff;
       font-size: 0.9rem;
       outline: none;
+      min-width: 0;
     }
 
     .form-control input[type="color"] {
@@ -361,6 +381,7 @@
 
     .admin-actions {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 15px;
     }
@@ -402,10 +423,12 @@
       font-size: 0.85rem;
     }
 
-    .prize-table th, .prize-table td {
+    .prize-table th,
+    .prize-table td {
       border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 8px;
       text-align: center;
+      overflow-wrap: anywhere;
     }
 
     .prize-table th {
@@ -415,6 +438,7 @@
 
     .action-cell {
       display: flex;
+      flex-wrap: wrap;
       gap: 6px;
       justify-content: center;
     }
@@ -448,11 +472,116 @@
     .btn-delete:hover {
       background: #c82333;
     }
+
+    /* RESPONSIVE UNTUK HP */
+    @media (max-width: 600px) {
+      .container {
+        padding: 75px 12px 24px;
+      }
+
+      .header-logo h2 {
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+      }
+
+      .header-logo h1 {
+        font-size: 1.65rem;
+      }
+
+      .wheel-container {
+        width: min(78vw, 360px);
+        height: min(78vw, 360px);
+      }
+
+      #wheel {
+        width: 100%;
+        height: 100%;
+      }
+
+      .wheel-outer {
+        padding: 8px;
+      }
+
+      .spin-btn {
+        padding: 13px 35px;
+        font-size: 1rem;
+      }
+
+      .admin-trigger-btn {
+        top: 12px;
+        right: 12px;
+      }
+
+      .modal-content {
+        padding: 18px 14px;
+        border-radius: 20px;
+      }
+
+      /* Gambar besar tetapi tetap muat di layar HP */
+      .prize-img-container {
+        width: min(76vw, 280px);
+        height: min(76vw, 280px);
+        margin: 12px auto 15px;
+        border-radius: 16px;
+      }
+
+      .prize-name {
+        font-size: 1.6rem;
+      }
+
+      .modal-title {
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+      }
+
+      .close-btn {
+        padding: 11px 28px;
+        font-size: 0.9rem;
+      }
+
+      .admin-modal-content {
+        padding: 15px 10px;
+      }
+
+      .prize-table {
+        font-size: 0.72rem;
+      }
+
+      .prize-table th,
+      .prize-table td {
+        padding: 5px 3px;
+      }
+    }
+
+    /* LAYAR HP PENDEK */
+    @media (max-height: 650px) {
+      .modal-content {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+
+      .prize-img-container {
+        width: min(45vh, 260px);
+        height: min(45vh, 260px);
+        margin: 8px auto;
+      }
+
+      .prize-name {
+        font-size: 1.5rem;
+        margin: 6px 0;
+      }
+
+      .close-btn {
+        margin-top: 8px;
+      }
+    }
   </style>
 </head>
-<body>
 
-  <button class="admin-trigger-btn" onclick="openAdminPanel()">⚙️ Kelola Hadiah</button>
+<body>
+  <button class="admin-trigger-btn" onclick="openAdminPanel()">
+    ⚙️ Kelola Hadiah
+  </button>
 
   <div class="container">
     <div class="header-logo">
@@ -472,18 +601,32 @@
       </div>
     </div>
 
-    <button id="spinBtn" class="spin-btn" onclick="spin()">SPIN NOW</button>
+    <button id="spinBtn" class="spin-btn" onclick="spin()">
+      SPIN NOW
+    </button>
   </div>
 
   <!-- MODAL PEMENANG -->
   <div class="modal-overlay" id="prizeModal">
     <div class="modal-content">
-      <div class="modal-title" id="modalTitle">SELAMAT! ANDA MENDAPATKAN</div>
-      <div class="prize-img-container">
-        <img id="modalPrizeImg" src="" alt="Hadiah" onerror="handleImageError(this)">
+      <div class="modal-title" id="modalTitle">
+        SELAMAT! ANDA MENDAPATKAN
       </div>
+
+      <div class="prize-img-container">
+        <img
+          id="modalPrizeImg"
+          src=""
+          alt="Gambar hadiah"
+          onerror="handleImageError(this)"
+        >
+      </div>
+
       <div class="prize-name" id="modalPrizeName">KEYCHAIN</div>
-      <button class="close-btn" onclick="closeModal()">AMBIL HADIAH</button>
+
+      <button class="close-btn" onclick="closeModal()">
+        AMBIL HADIAH
+      </button>
     </div>
   </div>
 
@@ -492,39 +635,53 @@
     <div class="admin-modal-content">
       <div class="admin-header">
         <h3>Kelola Hadiah Spin Wheel</h3>
-        <button class="btn-close-admin" onclick="closeAdminPanel()">&times;</button>
+        <button
+          class="btn-close-admin"
+          onclick="closeAdminPanel()"
+          aria-label="Tutup panel admin"
+        >&times;</button>
       </div>
 
       <div class="form-group-grid">
         <div class="form-control">
-          <label>Nama Hadiah</label>
+          <label for="addName">Nama Hadiah</label>
           <input type="text" id="addName" placeholder="Contoh: Running Shoes">
         </div>
+
         <div class="form-control">
-          <label>Stok (Qty)</label>
+          <label for="addQty">Stok (Qty)</label>
           <input type="number" id="addQty" min="1" value="10">
         </div>
+
         <div class="form-control">
-          <label>Peluang/Win Rate (%)</label>
+          <label for="addWeight">Peluang/Win Rate (%)</label>
           <input type="number" id="addWeight" min="0.1" step="0.1" value="5">
         </div>
+
         <div class="form-control">
-          <label>Nama File Gambar</label>
-          <input type="text" id="addImg" placeholder="Contoh: shoes.jpg">
+          <label for="addImg">Nama File Gambar</label>
+          <input type="text" id="addImg" placeholder="Contoh: shoes.jpeg">
         </div>
+
         <div class="form-control">
-          <label>Warna Sektor</label>
+          <label for="addColor">Warna Sektor</label>
           <input type="color" id="addColor" value="#FF6500">
         </div>
+
         <div class="form-control">
-          <label>Warna Teks</label>
+          <label for="addTextColor">Warna Teks</label>
           <input type="color" id="addTextColor" value="#FFFFFF">
         </div>
       </div>
 
       <div class="admin-actions">
-        <button class="btn-add" onclick="addNewPrize()">+ Tambah Hadiah</button>
-        <button class="btn-reset-default" onclick="resetToDefaultData()">Reset ke Default</button>
+        <button class="btn-add" onclick="addNewPrize()">
+          + Tambah Hadiah
+        </button>
+
+        <button class="btn-reset-default" onclick="resetToDefaultData()">
+          Reset ke Default
+        </button>
       </div>
 
       <table class="prize-table">
@@ -537,148 +694,214 @@
             <th>Aksi</th>
           </tr>
         </thead>
-        <tbody id="prizeTableBody">
-        </tbody>
+        <tbody id="prizeTableBody"></tbody>
       </table>
     </div>
   </div>
 
   <script>
-    // Gambar SVG Baku (Anti-Gagal) jika file lokal PC tidak terdeteksi oleh browser
+    // GAMBAR CADANGAN JIKA FILE GAMBAR TIDAK DITEMUKAN
     const svgFallbacks = {
-      "Keychain": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231E3E62'/><circle cx='50' cy='35' r='12' fill='none' stroke='%23FFD700' stroke-width='4'/><path d='M50 47 L50 75' stroke='%23FFD700' stroke-width='4'/><rect x='42' y='75' width='16' height='12' rx='3' fill='%23FF6500'/><text x='50' y='93' font-size='8' fill='%23FFF' text-anchor='middle' font-weight='bold'>KEYCHAIN</text></svg>",
-      "Running Sunglasses": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23FF6500'/><path d='M20 45 Q50 35 80 45 L75 60 Q50 50 25 60 Z' fill='%230B192C'/><circle cx='35' cy='52' r='10' fill='%23FFD700'/><circle cx='65' cy='52' r='10' fill='%23FFD700'/><text x='50' y='85' font-size='7' fill='%23FFF' text-anchor='middle' font-weight='bold'>SUNGLASSES</text></svg>",
-      "Sports Water Bottle": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B192C'/><rect x='40' y='20' width='20' height='8' fill='%23FF6500'/><rect x='35' y='28' width='30' height='55' rx='5' fill='%231E3E62' stroke='%23FFD700' stroke-width='2'/><text x='50' y='92' font-size='7' fill='%23FFF' text-anchor='middle' font-weight='bold'>WATER BOTTLE</text></svg>",
-      "Portable Sports Towel": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231E3E62'/><rect x='25' y='30' width='50' height='45' rx='4' fill='%23FF6500'/><path d='M25 40 L75 40' stroke='%23FFD700' stroke-width='3'/><text x='50' y='88' font-size='8' fill='%23FFF' text-anchor='middle' font-weight='bold'>TOWEL</text></svg>"
+      "Keychain":
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231E3E62'/><circle cx='50' cy='35' r='12' fill='none' stroke='%23FFD700' stroke-width='4'/><path d='M50 47 L50 75' stroke='%23FFD700' stroke-width='4'/><rect x='42' y='75' width='16' height='12' rx='3' fill='%23FF6500'/><text x='50' y='93' font-size='8' fill='%23FFF' text-anchor='middle' font-weight='bold'>KEYCHAIN</text></svg>",
+
+      "Running Sunglasses":
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23FF6500'/><path d='M20 45 Q50 35 80 45 L75 60 Q50 50 25 60 Z' fill='%230B192C'/><circle cx='35' cy='52' r='10' fill='%23FFD700'/><circle cx='65' cy='52' r='10' fill='%23FFD700'/><text x='50' y='85' font-size='7' fill='%23FFF' text-anchor='middle' font-weight='bold'>SUNGLASSES</text></svg>",
+
+      "Sports Water Bottle":
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B192C'/><rect x='40' y='20' width='20' height='8' fill='%23FF6500'/><rect x='35' y='28' width='30' height='55' rx='5' fill='%231E3E62' stroke='%23FFD700' stroke-width='2'/><text x='50' y='92' font-size='7' fill='%23FFF' text-anchor='middle' font-weight='bold'>WATER BOTTLE</text></svg>",
+
+      "Portable Sports Towel":
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231E3E62'/><rect x='25' y='30' width='50' height='45' rx='4' fill='%23FF6500'/><path d='M25 40 L75 40' stroke='%23FFD700' stroke-width='3'/><text x='50' y='88' font-size='8' fill='%23FFF' text-anchor='middle' font-weight='bold'>TOWEL</text></svg>"
     };
 
-    // Keychain Dikunci dengan Weight 85 (Dominan Utama)
+    // DATA HADIAH DEFAULT
     const defaultPrizes = [
-      { 
-        name: "Keychain", 
-        qty: 100, 
-        weight: 85, // Dominan keluar paling banyak
-        color: "#1E3E62", 
+      {
+        name: "Keychain",
+        qty: 100,
+        weight: 85,
+        color: "#1E3E62",
         textColor: "#FFFFFF",
-        image: "keychain.jpg" 
+        image: "keychain.jpeg"
       },
-      { 
-        name: "Running Sunglasses", 
-        qty: 50, 
-        weight: 5, 
-        color: "#FF6500", 
+      {
+        name: "Running Sunglasses",
+        qty: 50,
+        weight: 5,
+        color: "#FF6500",
         textColor: "#FFFFFF",
-        image: "running-sunglasses.jpg" 
+        image: "running-sunglasses.jpeg"
       },
-      { 
-        name: "Sports Water Bottle", 
-        qty: 50, 
-        weight: 5, 
-        color: "#0B192C", 
+      {
+        name: "Sports Water Bottle",
+        qty: 50,
+        weight: 5,
+        color: "#0B192C",
         textColor: "#FFFFFF",
-        image: "sports-water-bottle.jpg" 
+        image: "sports-water-bottle.jpeg"
       },
-      { 
-        name: "Portable Sports Towel", 
-        qty: 50, 
-        weight: 5, 
-        color: "#1E3E62", 
+      {
+        name: "Portable Sports Towel",
+        qty: 50,
+        weight: 5,
+        color: "#1E3E62",
         textColor: "#FFFFFF",
-        image: "portable-sports-towel.jpg" 
+        image: "portable-sports-towel.jpeg"
       }
     ];
 
-    function handleImageError(imgElement) {
-      const prizeName = modalPrizeName.innerText;
-      if (svgFallbacks[prizeName]) {
-        imgElement.src = svgFallbacks[prizeName];
-      } else {
-        imgElement.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B192C'/><text x='50' y='55' font-size='10' fill='%23FFD700' text-anchor='middle'>PRIZE</text></svg>";
-      }
+    const STORAGE_KEY = "jrf_prizes_v6";
+
+    // AMBIL ELEMEN HTML
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spinBtn");
+    const spinCountDisplay = document.getElementById("spinCount");
+    const prizeModal = document.getElementById("prizeModal");
+    const adminModal = document.getElementById("adminModal");
+    const modalPrizeName = document.getElementById("modalPrizeName");
+    const modalPrizeImg = document.getElementById("modalPrizeImg");
+
+    // MEMUAT DATA DARI PENYIMPANAN BROWSER
+    let storedPrizes = null;
+
+    try {
+      storedPrizes = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    } catch (error) {
+      console.warn("Data hadiah tersimpan tidak dapat dibaca.", error);
     }
 
-    let prizes = JSON.parse(localStorage.getItem('jrf_prizes_v6')) || JSON.parse(JSON.stringify(defaultPrizes));
+    let prizes = Array.isArray(storedPrizes)
+      ? storedPrizes
+      : JSON.parse(JSON.stringify(defaultPrizes));
 
-    const todayDate = new Date().toISOString().split('T')[0];
-    const lastSpinDate = localStorage.getItem('jrf_lastSpinDate');
+    // Melengkapi data jika ada properti yang belum tersedia
+    prizes = prizes.map(prize => ({
+      ...prize,
+      color: prize.color || "#1E3E62",
+      textColor: prize.textColor || "#FFFFFF",
+      image: prize.image || "keychain.jpeg",
+      qty: Number(prize.qty) || 0,
+      weight: Number(prize.weight) || 5
+    }));
+
+    const todayDate = new Date().toISOString().split("T")[0];
+    const lastSpinDate = localStorage.getItem("jrf_lastSpinDate");
 
     let totalSpins = 0;
+
     if (lastSpinDate === todayDate) {
-      totalSpins = parseInt(localStorage.getItem('jrf_totalSpins')) || 0;
+      totalSpins = parseInt(localStorage.getItem("jrf_totalSpins"), 10) || 0;
     } else {
       totalSpins = 0;
-      localStorage.setItem('jrf_lastSpinDate', todayDate);
-      localStorage.setItem('jrf_totalSpins', '0');
+      localStorage.setItem("jrf_lastSpinDate", todayDate);
+      localStorage.setItem("jrf_totalSpins", "0");
     }
 
-    prizes = prizes.filter(p => p.qty > 0);
-
-    const canvas = document.getElementById('wheel');
-    const ctx = canvas.getContext('2d');
-    const spinBtn = document.getElementById('spinBtn');
-    const spinCountDisplay = document.getElementById('spinCount');
-    const prizeModal = document.getElementById('prizeModal');
-    const adminModal = document.getElementById('adminModal');
-    const modalPrizeName = document.getElementById('modalPrizeName');
-    const modalPrizeImg = document.getElementById('modalPrizeImg');
+    prizes = prizes.filter(prize => prize.qty > 0);
 
     let currentRotation = 0;
     let lastWonPrize = null;
+    let isSpinning = false;
+    let soundInterval = null;
 
     spinCountDisplay.innerText = totalSpins;
 
+    // PENYIMPANAN DATA
     function saveToStorage() {
-      localStorage.setItem('jrf_prizes_v6', JSON.stringify(prizes));
-      localStorage.setItem('jrf_totalSpins', totalSpins.toString());
-      localStorage.setItem('jrf_lastSpinDate', todayDate);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prizes));
+      localStorage.setItem("jrf_totalSpins", totalSpins.toString());
+      localStorage.setItem("jrf_lastSpinDate", todayDate);
     }
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // AUDIO
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = AudioContextClass ? new AudioContextClass() : null;
 
     function playTickSound() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!audioCtx) return;
+
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      osc.type = 'triangle';
+
+      osc.type = "triangle";
       osc.frequency.setValueAtTime(600, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.04);
+
       gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+
       osc.connect(gain);
       gain.connect(audioCtx.destination);
+
       osc.start();
       osc.stop(audioCtx.currentTime + 0.04);
     }
 
     function playWinSound() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!audioCtx) return;
+
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+
       const now = audioCtx.currentTime;
       const notes = [261.63, 329.63, 392.00, 523.25];
-      
+
       notes.forEach((freq, index) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + index * 0.1);
-        gain.gain.setValueAtTime(0.3, now + index * 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + index * 0.1 + 0.3);
+        const startTime = now + index * 0.1;
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.3, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.start(now + index * 0.1);
-        osc.stop(now + index * 0.1 + 0.3);
+
+        osc.start(startTime);
+        osc.stop(startTime + 0.3);
       });
     }
 
+    // MENANGANI GAMBAR YANG GAGAL DIMUAT
+    function handleImageError(imgElement) {
+      if (imgElement.dataset.fallbackUsed === "true") {
+        return;
+      }
+
+      imgElement.dataset.fallbackUsed = "true";
+
+      const prizeName = modalPrizeName.innerText.trim();
+      const fallback = svgFallbacks[prizeName];
+
+      if (fallback) {
+        imgElement.src = fallback;
+      } else {
+        imgElement.src =
+          "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B192C'/><text x='50' y='55' font-size='10' fill='%23FFD700' text-anchor='middle'>PRIZE</text></svg>";
+      }
+    }
+
+    // MENGGAMBAR RODA SPIN
     function drawWheel() {
       const numSlices = prizes.length;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       if (numSlices === 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         return;
       }
 
       const sliceAngle = (2 * Math.PI) / numSlices;
       const radius = canvas.width / 2;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       for (let i = 0; i < numSlices; i++) {
         const startAngle = i * sliceAngle;
@@ -687,6 +910,7 @@
         ctx.beginPath();
         ctx.moveTo(radius, radius);
         ctx.arc(radius, radius, radius, startAngle, endAngle);
+        ctx.closePath();
         ctx.fillStyle = prizes[i].color;
         ctx.fill();
 
@@ -700,28 +924,36 @@
         ctx.textAlign = "right";
         ctx.fillStyle = prizes[i].textColor;
         ctx.font = "bold 13px 'Montserrat', sans-serif";
-        ctx.fillText(prizes[i].name, radius - 15, 5);
+        ctx.fillText(prizes[i].name, radius - 15, 5, radius - 25);
         ctx.restore();
       }
     }
 
+    // MENENTUKAN HADIAH BERDASARKAN BOBOT
     function getPrizeIndex() {
       if (prizes.length === 0) return -1;
 
-      const totalWeight = prizes.reduce((sum, p) => sum + p.weight, 0);
+      const totalWeight = prizes.reduce((sum, prize) => sum + prize.weight, 0);
+
+      if (totalWeight <= 0) return -1;
+
       let randomVal = Math.random() * totalWeight;
 
       for (let i = 0; i < prizes.length; i++) {
         if (randomVal < prizes[i].weight) {
           return i;
         }
+
         randomVal -= prizes[i].weight;
       }
 
       return prizes.length - 1;
     }
 
+    // MEMULAI SPIN
     function spin() {
+      if (isSpinning) return;
+
       if (prizes.length === 0) {
         alert("Maaf, semua stok hadiah telah habis!");
         return;
@@ -734,9 +966,11 @@
         return;
       }
 
+      isSpinning = true;
+      spinBtn.disabled = true;
+
       totalSpins++;
       spinCountDisplay.innerText = totalSpins;
-      spinBtn.disabled = true;
 
       const winningPrize = prizes[winningIndex];
       winningPrize.qty--;
@@ -746,46 +980,86 @@
 
       const numSlices = prizes.length;
       const degreesPerSlice = 360 / numSlices;
-      const targetDegree = 360 - (winningIndex * degreesPerSlice) - (degreesPerSlice / 2) - 90;
+
+      const targetDegree =
+        360 -
+        (winningIndex * degreesPerSlice) -
+        (degreesPerSlice / 2) -
+        90;
+
       const extraRounds = 360 * 6;
-      const nextRotation = currentRotation + extraRounds + ((targetDegree - (currentRotation % 360) + 360) % 360);
-      
-      let soundInterval = setInterval(() => {
-        playTickSound();
-      }, 150);
+
+      const nextRotation =
+        currentRotation +
+        extraRounds +
+        ((targetDegree - (currentRotation % 360) + 360) % 360);
+
+      if (soundInterval) {
+        clearInterval(soundInterval);
+      }
+
+      soundInterval = setInterval(playTickSound, 150);
 
       setTimeout(() => {
-        clearInterval(soundInterval);
-        soundInterval = setInterval(() => { playTickSound(); }, 300);
+        if (soundInterval) clearInterval(soundInterval);
+        soundInterval = setInterval(playTickSound, 300);
       }, 3000);
 
       setTimeout(() => {
-        clearInterval(soundInterval);
+        if (soundInterval) {
+          clearInterval(soundInterval);
+          soundInterval = null;
+        }
       }, 4500);
 
       currentRotation = nextRotation;
       canvas.style.transform = `rotate(${currentRotation}deg)`;
 
       setTimeout(() => {
+        if (soundInterval) {
+          clearInterval(soundInterval);
+          soundInterval = null;
+        }
+
+        isSpinning = false;
         spinBtn.disabled = false;
+
         showPrizeModal(winningPrize);
         renderPrizeTable();
       }, 5000);
     }
 
+    // MENAMPILKAN POP-UP HADIAH
     function showPrizeModal(prize) {
       playWinSound();
+
       modalPrizeName.innerText = prize.name;
-      modalPrizeImg.src = prize.image;
-      prizeModal.classList.add('active');
+
+      // Reset status fallback sebelum mencoba gambar baru
+      modalPrizeImg.dataset.fallbackUsed = "false";
+      modalPrizeImg.alt = prize.name;
+
+      // Gunakan nama file yang tersimpan di data hadiah
+      const imageName = String(prize.image || "keychain.jpeg").trim();
+
+      // Path relatif cocok untuk GitHub Pages jika gambar berada
+      // dalam folder yang sama dengan index.html
+      modalPrizeImg.src = "./" + imageName;
+
+      prizeModal.classList.add("active");
     }
 
+    // MENUTUP POP-UP HADIAH
     function closeModal() {
-      prizeModal.classList.remove('active');
+      prizeModal.classList.remove("active");
 
       if (lastWonPrize && lastWonPrize.qty <= 0) {
-        alert(`Perhatian: Stok hadiah "${lastWonPrize.name}" telah HABIS! Item langsung dihapus dari roda.`);
-        prizes = prizes.filter(p => p.qty > 0);
+        alert(
+          `Perhatian: Stok hadiah "${lastWonPrize.name}" telah HABIS! Item langsung dihapus dari roda.`
+        );
+
+        prizes = prizes.filter(prize => prize.qty > 0);
+
         saveToStorage();
         resetWheelAnimation();
       }
@@ -793,138 +1067,231 @@
       lastWonPrize = null;
     }
 
-    /* ADMIN PANEL */
+    // ADMIN PANEL
     function openAdminPanel() {
       const pin = prompt("Masukkan PIN Keamanan Admin:");
+
       if (pin === "1234") {
         renderPrizeTable();
-        adminModal.classList.add('active');
+        adminModal.classList.add("active");
       } else if (pin !== null) {
         alert("PIN Salah! Akses ditolak.");
       }
     }
 
     function closeAdminPanel() {
-      adminModal.classList.remove('active');
+      adminModal.classList.remove("active");
     }
 
+    // TABEL HADIAH
     function renderPrizeTable() {
-      const tbody = document.getElementById('prizeTableBody');
-      tbody.innerHTML = '';
+      const tbody = document.getElementById("prizeTableBody");
+      tbody.innerHTML = "";
 
-      const totalWeight = prizes.reduce((sum, p) => sum + p.weight, 0);
+      const totalWeight = prizes.reduce((sum, prize) => sum + prize.weight, 0);
 
-      prizes.forEach((p, index) => {
-        const percentage = totalWeight > 0 ? ((p.weight / totalWeight) * 100).toFixed(1) : 0;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="text-align:left;"><strong>${p.name}</strong></td>
-          <td>${p.qty}</td>
-          <td>${percentage}% (Bobot: ${p.weight})</td>
-          <td><code>${p.image}</code></td>
-          <td class="action-cell">
-            <button class="btn-edit" onclick="editPrize(${index})">Edit</button>
-            <button class="btn-delete" onclick="removePrize(${index})">Hapus</button>
-          </td>
-        `;
+      prizes.forEach((prize, index) => {
+        const percentage =
+          totalWeight > 0
+            ? ((prize.weight / totalWeight) * 100).toFixed(1)
+            : "0.0";
+
+        const tr = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        nameCell.style.textAlign = "left";
+
+        const strong = document.createElement("strong");
+        strong.textContent = prize.name;
+        nameCell.appendChild(strong);
+
+        const qtyCell = document.createElement("td");
+        qtyCell.textContent = prize.qty;
+
+        const percentageCell = document.createElement("td");
+        percentageCell.textContent =
+          `${percentage}% (Bobot: ${prize.weight})`;
+
+        const imageCell = document.createElement("td");
+        const imageCode = document.createElement("code");
+        imageCode.textContent = prize.image;
+        imageCell.appendChild(imageCode);
+
+        const actionCell = document.createElement("td");
+        actionCell.className = "action-cell";
+
+        const editButton = document.createElement("button");
+        editButton.className = "btn-edit";
+        editButton.textContent = "Edit";
+        editButton.onclick = () => editPrize(index);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "btn-delete";
+        deleteButton.textContent = "Hapus";
+        deleteButton.onclick = () => removePrize(index);
+
+        actionCell.append(editButton, deleteButton);
+        tr.append(nameCell, qtyCell, percentageCell, imageCell, actionCell);
         tbody.appendChild(tr);
       });
     }
 
+    // EDIT HADIAH
     function editPrize(index) {
-      const p = prizes[index];
-      
-      const newQtyStr = prompt(`Edit Stok (Qty) untuk "${p.name}":`, p.qty);
+      const prize = prizes[index];
+
+      const newQtyStr = prompt(
+        `Edit Stok (Qty) untuk "${prize.name}":`,
+        prize.qty
+      );
+
       if (newQtyStr === null) return;
-      const newQty = parseInt(newQtyStr);
-      if (isNaN(newQty) || newQty < 0) {
-        alert("Stok (Qty) tidak valid!");
+
+      const newQty = Number(newQtyStr);
+
+      if (!Number.isInteger(newQty) || newQty < 0) {
+        alert("Stok (Qty) harus berupa bilangan bulat 0 atau lebih!");
         return;
       }
 
-      const newWeightStr = prompt(`Edit Nilai Persentase/Bobot untuk "${p.name}":\n(Nilai lebih besar = Lebih sering keluar)`, p.weight);
+      const newWeightStr = prompt(
+        `Edit Nilai Persentase/Bobot untuk "${prize.name}":\n(Nilai lebih besar = lebih sering keluar)`,
+        prize.weight
+      );
+
       if (newWeightStr === null) return;
+
       const newWeight = parseFloat(newWeightStr);
-      if (isNaN(newWeight) || newWeight <= 0) {
-        alert("Nilai Persentase/Bobot tidak valid!");
+
+      if (!Number.isFinite(newWeight) || newWeight <= 0) {
+        alert("Nilai Persentase/Bobot harus lebih dari 0!");
         return;
       }
 
-      const newImgStr = prompt(`Edit Nama File Gambar untuk "${p.name}":`, p.image);
+      const newImgStr = prompt(
+        `Edit Nama File Gambar untuk "${prize.name}":`,
+        prize.image
+      );
+
       if (newImgStr !== null && newImgStr.trim() !== "") {
-        p.image = newImgStr.trim();
+        prize.image = newImgStr.trim();
       }
 
-      p.qty = newQty;
-      p.weight = newWeight;
+      prize.qty = newQty;
+      prize.weight = newWeight;
+
       prizes = prizes.filter(item => item.qty > 0);
 
       saveToStorage();
       resetWheelAnimation();
     }
 
+    // TAMBAH HADIAH BARU
     function addNewPrize() {
-      const name = document.getElementById('addName').value.trim();
-      const qty = parseInt(document.getElementById('addQty').value);
-      const weight = parseFloat(document.getElementById('addWeight').value);
-      const img = document.getElementById('addImg').value.trim();
-      const color = document.getElementById('addColor').value;
-      const textColor = document.getElementById('addTextColor').value;
+      const name = document.getElementById("addName").value.trim();
+      const qty = parseInt(document.getElementById("addQty").value, 10);
+      const weight = parseFloat(document.getElementById("addWeight").value);
+      const img = document.getElementById("addImg").value.trim();
+      const color = document.getElementById("addColor").value;
+      const textColor = document.getElementById("addTextColor").value;
 
-      if (!name) { alert("Nama hadiah tidak boleh kosong!"); return; }
-      if (isNaN(qty) || qty <= 0) { alert("Stok (Qty) harus berupa angka lebih dari 0!"); return; }
-      if (isNaN(weight) || weight <= 0) { alert("Persentase/Bobot harus berupa angka lebih dari 0!"); return; }
+      if (!name) {
+        alert("Nama hadiah tidak boleh kosong!");
+        return;
+      }
+
+      if (!Number.isInteger(qty) || qty <= 0) {
+        alert("Stok (Qty) harus berupa bilangan bulat lebih dari 0!");
+        return;
+      }
+
+      if (!Number.isFinite(weight) || weight <= 0) {
+        alert("Persentase/Bobot harus berupa angka lebih dari 0!");
+        return;
+      }
 
       prizes.push({
-        name: name,
-        qty: qty,
-        weight: weight,
-        color: color,
-        textColor: textColor,
-        image: img || 'keychain.jpg'
+        name,
+        qty,
+        weight,
+        color,
+        textColor,
+        image: img || "keychain.jpeg"
       });
 
-      document.getElementById('addName').value = '';
-      document.getElementById('addQty').value = '10';
-      document.getElementById('addWeight').value = '5';
-      document.getElementById('addImg').value = '';
+      document.getElementById("addName").value = "";
+      document.getElementById("addQty").value = "10";
+      document.getElementById("addWeight").value = "5";
+      document.getElementById("addImg").value = "";
 
       saveToStorage();
       resetWheelAnimation();
     }
 
+    // HAPUS HADIAH
     function removePrize(index) {
-      if (confirm(`Apakah Anda yakin ingin menghapus "${prizes[index].name}" dari roda spin?`)) {
+      if (
+        confirm(
+          `Apakah Anda yakin ingin menghapus "${prizes[index].name}" dari roda spin?`
+        )
+      ) {
         prizes.splice(index, 1);
         saveToStorage();
         resetWheelAnimation();
       }
     }
 
+    // RESET KE DATA DEFAULT
     function resetToDefaultData() {
-      if (confirm("Apakah Anda yakin ingin mereset seluruh hadiah dan counter spin ke data awal?")) {
-        localStorage.removeItem('jrf_prizes_v6');
+      if (
+        confirm(
+          "Apakah Anda yakin ingin mereset seluruh hadiah dan counter spin ke data awal?"
+        )
+      ) {
         prizes = JSON.parse(JSON.stringify(defaultPrizes));
         totalSpins = 0;
+
         spinCountDisplay.innerText = totalSpins;
+
+        localStorage.removeItem(STORAGE_KEY);
         saveToStorage();
         resetWheelAnimation();
       }
     }
 
+    // RESET ANIMASI DAN GAMBAR RODA
     function resetWheelAnimation() {
-      canvas.style.transition = 'none';
-      canvas.style.transform = 'rotate(0deg)';
+      canvas.style.transition = "none";
+      canvas.style.transform = "rotate(0deg)";
       currentRotation = 0;
-      
-      canvas.offsetHeight;
-      canvas.style.transition = 'transform 5s cubic-bezier(0.15, 0.99, 0.35, 1)';
+
+      // Memaksa browser menerapkan perubahan sebelum animasi dipulihkan
+      void canvas.offsetHeight;
+
+      canvas.style.transition =
+        "transform 5s cubic-bezier(0.15, 0.99, 0.35, 1)";
 
       drawWheel();
       renderPrizeTable();
     }
 
+    // TUTUP POP-UP JIKA AREA GELAP DI LUAR DIKLIK
+    prizeModal.addEventListener("click", function(event) {
+      if (event.target === prizeModal) {
+        closeModal();
+      }
+    });
+
+    adminModal.addEventListener("click", function(event) {
+      if (event.target === adminModal) {
+        closeAdminPanel();
+      }
+    });
+
+    // INISIALISASI
     drawWheel();
+    renderPrizeTable();
+    saveToStorage();
   </script>
 </body>
 </html>
