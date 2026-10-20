@@ -32,7 +32,6 @@
       position: relative;
     }
 
-    /* Track Lines Background Effect */
     body::before {
       content: "";
       position: absolute;
@@ -46,6 +45,28 @@
       );
       z-index: 0;
       pointer-events: none;
+    }
+
+    .admin-trigger-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #aaa;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s;
+    }
+
+    .admin-trigger-btn:hover {
+      background: var(--jrf-orange);
+      color: #fff;
+      border-color: var(--jrf-orange);
     }
 
     .container {
@@ -112,7 +133,6 @@
       height: 360px;
     }
 
-    /* Penunjuk Roda (Pointer) */
     .pointer {
       position: absolute;
       top: -18px;
@@ -132,7 +152,6 @@
       transition: transform 5s cubic-bezier(0.15, 0.99, 0.35, 1);
     }
 
-    /* Center Cap */
     .center-cap {
       position: absolute;
       top: 50%;
@@ -175,7 +194,7 @@
       transform: none;
     }
 
-    /* --- MODAL POPUP ZOOM HADIAH --- */
+    /* MODAL OVERLAY HADIAH */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -199,10 +218,10 @@
       background: linear-gradient(135deg, #1E3E62 0%, #0B192C 100%);
       border: 3px solid var(--jrf-orange);
       border-radius: 24px;
-      padding: 40px 30px;
+      padding: 30px;
       text-align: center;
       max-width: 90%;
-      width: 450px;
+      width: 420px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 30px rgba(255, 101, 0, 0.3);
       transform: scale(0.3);
       transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -212,39 +231,46 @@
       transform: scale(1);
     }
 
+    .prize-img-container {
+      width: 160px;
+      height: 160px;
+      margin: 10px auto 15px auto;
+      border-radius: 20px;
+      border: 3px solid var(--jrf-gold);
+      overflow: hidden;
+      background: #0B192C;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .prize-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .modal-title {
-      font-size: 1.1rem;
+      font-size: 1rem;
       letter-spacing: 2px;
       color: #aaa;
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
 
     .prize-name {
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 900;
       color: var(--jrf-gold);
       text-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
-      margin: 15px 0;
+      margin: 10px 0;
       text-transform: uppercase;
       line-height: 1.2;
     }
 
-    .grand-prize-tag {
-      display: inline-block;
-      background: var(--jrf-orange);
-      color: #fff;
-      font-weight: 800;
-      font-size: 0.9rem;
-      padding: 5px 15px;
-      border-radius: 20px;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
     .close-btn {
-      margin-top: 20px;
+      margin-top: 15px;
       padding: 12px 35px;
       font-size: 1rem;
       font-weight: 700;
@@ -259,9 +285,174 @@
     .close-btn:hover {
       background: #e05500;
     }
+
+    /* POPUP ADMIN PANEL */
+    .admin-modal-content {
+      background: #0B192C;
+      border: 2px solid var(--jrf-orange);
+      border-radius: 20px;
+      padding: 25px;
+      max-width: 850px;
+      width: 95%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .admin-header h3 {
+      color: var(--jrf-gold);
+      font-size: 1.3rem;
+      text-transform: uppercase;
+    }
+
+    .btn-close-admin {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .form-group-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .form-control {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-control label {
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      color: #ccc;
+    }
+
+    .form-control input[type="text"],
+    .form-control input[type="number"],
+    .form-control input[type="color"] {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid var(--jrf-dark-blue);
+      background: #162a45;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .form-control input[type="color"] {
+      height: 38px;
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .btn-add {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-add:hover {
+      background: #218838;
+    }
+
+    .btn-reset-default {
+      background: #fd7e14;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-reset-default:hover {
+      background: #e06d0e;
+    }
+
+    .prize-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 0.85rem;
+    }
+
+    .prize-table th, .prize-table td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px;
+      text-align: center;
+    }
+
+    .prize-table th {
+      background: var(--jrf-dark-blue);
+      color: var(--jrf-gold);
+    }
+
+    .action-cell {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .btn-edit {
+      background: #17a2b8;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .btn-edit:hover {
+      background: #138496;
+    }
+
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .btn-delete:hover {
+      background: #c82333;
+    }
   </style>
 </head>
 <body>
+
+  <button class="admin-trigger-btn" onclick="openAdminPanel()">⚙️ Kelola Hadiah</button>
 
   <div class="container">
     <div class="header-logo">
@@ -284,42 +475,164 @@
     <button id="spinBtn" class="spin-btn" onclick="spin()">SPIN NOW</button>
   </div>
 
-  <!-- POPUP ZOOM HADIAH -->
+  <!-- MODAL PEMENANG -->
   <div class="modal-overlay" id="prizeModal">
     <div class="modal-content">
-      <div id="badgeContainer"></div>
       <div class="modal-title" id="modalTitle">SELAMAT! ANDA MENDAPATKAN</div>
-      <div class="prize-name" id="modalPrizeName">HEADBAND</div>
+      <div class="prize-img-container">
+        <img id="modalPrizeImg" src="" alt="Hadiah" onerror="handleImageError(this)">
+      </div>
+      <div class="prize-name" id="modalPrizeName">KEYCHAIN</div>
       <button class="close-btn" onclick="closeModal()">AMBIL HADIAH</button>
     </div>
   </div>
 
+  <!-- MODAL ADMIN -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="admin-modal-content">
+      <div class="admin-header">
+        <h3>Kelola Hadiah Spin Wheel</h3>
+        <button class="btn-close-admin" onclick="closeAdminPanel()">&times;</button>
+      </div>
+
+      <div class="form-group-grid">
+        <div class="form-control">
+          <label>Nama Hadiah</label>
+          <input type="text" id="addName" placeholder="Contoh: Running Shoes">
+        </div>
+        <div class="form-control">
+          <label>Stok (Qty)</label>
+          <input type="number" id="addQty" min="1" value="10">
+        </div>
+        <div class="form-control">
+          <label>Peluang/Win Rate (%)</label>
+          <input type="number" id="addWeight" min="0.1" step="0.1" value="5">
+        </div>
+        <div class="form-control">
+          <label>Nama File Gambar</label>
+          <input type="text" id="addImg" placeholder="Contoh: shoes.jpg">
+        </div>
+        <div class="form-control">
+          <label>Warna Sektor</label>
+          <input type="color" id="addColor" value="#FF6500">
+        </div>
+        <div class="form-control">
+          <label>Warna Teks</label>
+          <input type="color" id="addTextColor" value="#FFFFFF">
+        </div>
+      </div>
+
+      <div class="admin-actions">
+        <button class="btn-add" onclick="addNewPrize()">+ Tambah Hadiah</button>
+        <button class="btn-reset-default" onclick="resetToDefaultData()">Reset ke Default</button>
+      </div>
+
+      <table class="prize-table">
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Stok</th>
+            <th>Percentage (%)</th>
+            <th>Gambar</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="prizeTableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <script>
-    // Data Hadiah dengan stok (qty) dan Win Rate sesuai instruksi
-    let prizes = [
-      { name: "Keychain", qty: 201, weight: 48.66, color: "#1E3E62", textColor: "#FFFFFF" },
-      { name: "BT Speaker", qty: 1, weight: 0.24, color: "#E63946", textColor: "#FFFFFF", isGrand: true },
-      { name: "Earset Lenovo", qty: 10, weight: 2.43, color: "#FFD700", textColor: "#0B192C", isGrand: true }, 
-      { name: "Kaus Kaki", qty: 50, weight: 12.17, color: "#0B192C", textColor: "#FFFFFF" },
-      { name: "Headband", qty: 50, weight: 12.17, color: "#FF6500", textColor: "#FFFFFF" },
-      { name: "Handuk Sport", qty: 50, weight: 12.17, color: "#1E3E62", textColor: "#FFFFFF" },
-      { name: "Running Vest", qty: 50, weight: 12.17, color: "#0B192C", textColor: "#FFFFFF" }
+    // Gambar SVG Baku (Anti-Gagal) jika file lokal PC tidak terdeteksi oleh browser
+    const svgFallbacks = {
+      "Keychain": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231E3E62'/><circle cx='50' cy='35' r='12' fill='none' stroke='%23FFD700' stroke-width='4'/><path d='M50 47 L50 75' stroke='%23FFD700' stroke-width='4'/><rect x='42' y='75' width='16' height='12' rx='3' fill='%23FF6500'/><text x='50' y='93' font-size='8' fill='%23FFF' text-anchor='middle' font-weight='bold'>KEYCHAIN</text></svg>",
+      "Running Sunglasses": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23FF6500'/><path d='M20 45 Q50 35 80 45 L75 60 Q50 50 25 60 Z' fill='%230B192C'/><circle cx='35' cy='52' r='10' fill='%23FFD700'/><circle cx='65' cy='52' r='10' fill='%23FFD700'/><text x='50' y='85' font-size='7' fill='%23FFF' text-anchor='middle' font-weight='bold'>SUNGLASSES</text></svg>",
+      "Sports Water Bottle": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B192C'/><rect x='40' y='20' width='20' height='8' fill='%23FF6500'/><rect x='35' y='28' width='30' height='55' rx='5' fill='%231E3E62' stroke='%23FFD700' stroke-width='2'/><text x='50' y='92' font-size='7' fill='%23FFF' text-anchor='middle' font-weight='bold'>WATER BOTTLE</text></svg>",
+      "Portable Sports Towel": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231E3E62'/><rect x='25' y='30' width='50' height='45' rx='4' fill='%23FF6500'/><path d='M25 40 L75 40' stroke='%23FFD700' stroke-width='3'/><text x='50' y='88' font-size='8' fill='%23FFF' text-anchor='middle' font-weight='bold'>TOWEL</text></svg>"
+    };
+
+    // Keychain Dikunci dengan Weight 85 (Dominan Utama)
+    const defaultPrizes = [
+      { 
+        name: "Keychain", 
+        qty: 100, 
+        weight: 85, // Dominan keluar paling banyak
+        color: "#1E3E62", 
+        textColor: "#FFFFFF",
+        image: "keychain.jpg" 
+      },
+      { 
+        name: "Running Sunglasses", 
+        qty: 50, 
+        weight: 5, 
+        color: "#FF6500", 
+        textColor: "#FFFFFF",
+        image: "running-sunglasses.jpg" 
+      },
+      { 
+        name: "Sports Water Bottle", 
+        qty: 50, 
+        weight: 5, 
+        color: "#0B192C", 
+        textColor: "#FFFFFF",
+        image: "sports-water-bottle.jpg" 
+      },
+      { 
+        name: "Portable Sports Towel", 
+        qty: 50, 
+        weight: 5, 
+        color: "#1E3E62", 
+        textColor: "#FFFFFF",
+        image: "portable-sports-towel.jpg" 
+      }
     ];
+
+    function handleImageError(imgElement) {
+      const prizeName = modalPrizeName.innerText;
+      if (svgFallbacks[prizeName]) {
+        imgElement.src = svgFallbacks[prizeName];
+      } else {
+        imgElement.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B192C'/><text x='50' y='55' font-size='10' fill='%23FFD700' text-anchor='middle'>PRIZE</text></svg>";
+      }
+    }
+
+    let prizes = JSON.parse(localStorage.getItem('jrf_prizes_v6')) || JSON.parse(JSON.stringify(defaultPrizes));
+
+    const todayDate = new Date().toISOString().split('T')[0];
+    const lastSpinDate = localStorage.getItem('jrf_lastSpinDate');
+
+    let totalSpins = 0;
+    if (lastSpinDate === todayDate) {
+      totalSpins = parseInt(localStorage.getItem('jrf_totalSpins')) || 0;
+    } else {
+      totalSpins = 0;
+      localStorage.setItem('jrf_lastSpinDate', todayDate);
+      localStorage.setItem('jrf_totalSpins', '0');
+    }
+
+    prizes = prizes.filter(p => p.qty > 0);
 
     const canvas = document.getElementById('wheel');
     const ctx = canvas.getContext('2d');
     const spinBtn = document.getElementById('spinBtn');
     const spinCountDisplay = document.getElementById('spinCount');
     const prizeModal = document.getElementById('prizeModal');
+    const adminModal = document.getElementById('adminModal');
     const modalPrizeName = document.getElementById('modalPrizeName');
-    const modalTitle = document.getElementById('modalTitle');
-    const badgeContainer = document.getElementById('badgeContainer');
+    const modalPrizeImg = document.getElementById('modalPrizeImg');
 
-    let totalSpins = 0;
     let currentRotation = 0;
     let lastWonPrize = null;
 
-    // --- Web Audio API untuk Efek Suara ---
+    spinCountDisplay.innerText = totalSpins;
+
+    function saveToStorage() {
+      localStorage.setItem('jrf_prizes_v6', JSON.stringify(prizes));
+      localStorage.setItem('jrf_totalSpins', totalSpins.toString());
+      localStorage.setItem('jrf_lastSpinDate', todayDate);
+    }
+
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playTickSound() {
@@ -340,7 +653,7 @@
     function playWinSound() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       const now = audioCtx.currentTime;
-      const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+      const notes = [261.63, 329.63, 392.00, 523.25];
       
       notes.forEach((freq, index) => {
         const osc = audioCtx.createOscillator();
@@ -356,10 +669,12 @@
       });
     }
 
-    // Menggambar Roda Spin secara Dinamis berdasarkan Hadiah yang Masih Tersedia
     function drawWheel() {
       const numSlices = prizes.length;
-      if (numSlices === 0) return;
+      if (numSlices === 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
 
       const sliceAngle = (2 * Math.PI) / numSlices;
       const radius = canvas.width / 2;
@@ -369,19 +684,16 @@
         const startAngle = i * sliceAngle;
         const endAngle = startAngle + sliceAngle;
 
-        // Gambar Sektor
         ctx.beginPath();
         ctx.moveTo(radius, radius);
         ctx.arc(radius, radius, radius, startAngle, endAngle);
         ctx.fillStyle = prizes[i].color;
         ctx.fill();
 
-        // Stroke Border
         ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Gambar Teks
         ctx.save();
         ctx.translate(radius, radius);
         ctx.rotate(startAngle + sliceAngle / 2);
@@ -393,11 +705,9 @@
       }
     }
 
-    // Logika Random Berdasarkan Win Rate (Weighted Random)
     function getPrizeIndex() {
       if (prizes.length === 0) return -1;
 
-      // Hitung total bobot (win rate) dari item yang masih ada
       const totalWeight = prizes.reduce((sum, p) => sum + p.weight, 0);
       let randomVal = Math.random() * totalWeight;
 
@@ -411,7 +721,6 @@
       return prizes.length - 1;
     }
 
-    // Fungsi Spin Utama
     function spin() {
       if (prizes.length === 0) {
         alert("Maaf, semua stok hadiah telah habis!");
@@ -429,19 +738,18 @@
       spinCountDisplay.innerText = totalSpins;
       spinBtn.disabled = true;
 
-      // Pengurangan Stok Item
       const winningPrize = prizes[winningIndex];
       winningPrize.qty--;
       lastWonPrize = winningPrize;
 
-      // Kalkulasi Sudut Putaran
+      saveToStorage();
+
       const numSlices = prizes.length;
       const degreesPerSlice = 360 / numSlices;
       const targetDegree = 360 - (winningIndex * degreesPerSlice) - (degreesPerSlice / 2) - 90;
-      const extraRounds = 360 * 6; // 6 Putaran penuh
+      const extraRounds = 360 * 6;
       const nextRotation = currentRotation + extraRounds + ((targetDegree - (currentRotation % 360) + 360) % 360);
       
-      // Efek Suara Detik saat Berputar
       let soundInterval = setInterval(() => {
         playTickSound();
       }, 150);
@@ -458,54 +766,164 @@
       currentRotation = nextRotation;
       canvas.style.transform = `rotate(${currentRotation}deg)`;
 
-      // Saat Spin Selesai
       setTimeout(() => {
         spinBtn.disabled = false;
         showPrizeModal(winningPrize);
+        renderPrizeTable();
       }, 5000);
     }
 
-    // Tampilkan Modal Pemenang Hadiah & Cek Stok Habis
     function showPrizeModal(prize) {
       playWinSound();
-      modalTitle.innerText = "SELAMAT! ANDA MENDAPATKAN";
       modalPrizeName.innerText = prize.name;
-
-      if (prize.isGrand) {
-        badgeContainer.innerHTML = `<span class="grand-prize-tag">🌟 GRAND PRIZE 🌟</span>`;
-      } else {
-        badgeContainer.innerHTML = ``;
-      }
-
+      modalPrizeImg.src = prize.image;
       prizeModal.classList.add('active');
     }
 
     function closeModal() {
       prizeModal.classList.remove('active');
 
-      // Cek apakah item yang baru dimenangkan sudah habis stoknya
       if (lastWonPrize && lastWonPrize.qty <= 0) {
-        alert(`Perhatian: Stok hadiah "${lastWonPrize.name}" telah HABIS! Item akan dihapus dari roda.`);
-        
-        // Hapus item dari array hadiah
+        alert(`Perhatian: Stok hadiah "${lastWonPrize.name}" telah HABIS! Item langsung dihapus dari roda.`);
         prizes = prizes.filter(p => p.qty > 0);
-
-        // Reset orientasi roda dan gambar ulang sektor yang baru
-        canvas.style.transition = 'none';
-        canvas.style.transform = 'rotate(0deg)';
-        currentRotation = 0;
-        
-        // Force Reflow untuk menerapkan reset transformasi seketika
-        canvas.offsetHeight;
-        canvas.style.transition = 'transform 5s cubic-bezier(0.15, 0.99, 0.35, 1)';
-
-        drawWheel();
+        saveToStorage();
+        resetWheelAnimation();
       }
 
       lastWonPrize = null;
     }
 
-    // Inisialisasi Roda Pertama Kali
+    /* ADMIN PANEL */
+    function openAdminPanel() {
+      const pin = prompt("Masukkan PIN Keamanan Admin:");
+      if (pin === "1234") {
+        renderPrizeTable();
+        adminModal.classList.add('active');
+      } else if (pin !== null) {
+        alert("PIN Salah! Akses ditolak.");
+      }
+    }
+
+    function closeAdminPanel() {
+      adminModal.classList.remove('active');
+    }
+
+    function renderPrizeTable() {
+      const tbody = document.getElementById('prizeTableBody');
+      tbody.innerHTML = '';
+
+      const totalWeight = prizes.reduce((sum, p) => sum + p.weight, 0);
+
+      prizes.forEach((p, index) => {
+        const percentage = totalWeight > 0 ? ((p.weight / totalWeight) * 100).toFixed(1) : 0;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="text-align:left;"><strong>${p.name}</strong></td>
+          <td>${p.qty}</td>
+          <td>${percentage}% (Bobot: ${p.weight})</td>
+          <td><code>${p.image}</code></td>
+          <td class="action-cell">
+            <button class="btn-edit" onclick="editPrize(${index})">Edit</button>
+            <button class="btn-delete" onclick="removePrize(${index})">Hapus</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function editPrize(index) {
+      const p = prizes[index];
+      
+      const newQtyStr = prompt(`Edit Stok (Qty) untuk "${p.name}":`, p.qty);
+      if (newQtyStr === null) return;
+      const newQty = parseInt(newQtyStr);
+      if (isNaN(newQty) || newQty < 0) {
+        alert("Stok (Qty) tidak valid!");
+        return;
+      }
+
+      const newWeightStr = prompt(`Edit Nilai Persentase/Bobot untuk "${p.name}":\n(Nilai lebih besar = Lebih sering keluar)`, p.weight);
+      if (newWeightStr === null) return;
+      const newWeight = parseFloat(newWeightStr);
+      if (isNaN(newWeight) || newWeight <= 0) {
+        alert("Nilai Persentase/Bobot tidak valid!");
+        return;
+      }
+
+      const newImgStr = prompt(`Edit Nama File Gambar untuk "${p.name}":`, p.image);
+      if (newImgStr !== null && newImgStr.trim() !== "") {
+        p.image = newImgStr.trim();
+      }
+
+      p.qty = newQty;
+      p.weight = newWeight;
+      prizes = prizes.filter(item => item.qty > 0);
+
+      saveToStorage();
+      resetWheelAnimation();
+    }
+
+    function addNewPrize() {
+      const name = document.getElementById('addName').value.trim();
+      const qty = parseInt(document.getElementById('addQty').value);
+      const weight = parseFloat(document.getElementById('addWeight').value);
+      const img = document.getElementById('addImg').value.trim();
+      const color = document.getElementById('addColor').value;
+      const textColor = document.getElementById('addTextColor').value;
+
+      if (!name) { alert("Nama hadiah tidak boleh kosong!"); return; }
+      if (isNaN(qty) || qty <= 0) { alert("Stok (Qty) harus berupa angka lebih dari 0!"); return; }
+      if (isNaN(weight) || weight <= 0) { alert("Persentase/Bobot harus berupa angka lebih dari 0!"); return; }
+
+      prizes.push({
+        name: name,
+        qty: qty,
+        weight: weight,
+        color: color,
+        textColor: textColor,
+        image: img || 'keychain.jpg'
+      });
+
+      document.getElementById('addName').value = '';
+      document.getElementById('addQty').value = '10';
+      document.getElementById('addWeight').value = '5';
+      document.getElementById('addImg').value = '';
+
+      saveToStorage();
+      resetWheelAnimation();
+    }
+
+    function removePrize(index) {
+      if (confirm(`Apakah Anda yakin ingin menghapus "${prizes[index].name}" dari roda spin?`)) {
+        prizes.splice(index, 1);
+        saveToStorage();
+        resetWheelAnimation();
+      }
+    }
+
+    function resetToDefaultData() {
+      if (confirm("Apakah Anda yakin ingin mereset seluruh hadiah dan counter spin ke data awal?")) {
+        localStorage.removeItem('jrf_prizes_v6');
+        prizes = JSON.parse(JSON.stringify(defaultPrizes));
+        totalSpins = 0;
+        spinCountDisplay.innerText = totalSpins;
+        saveToStorage();
+        resetWheelAnimation();
+      }
+    }
+
+    function resetWheelAnimation() {
+      canvas.style.transition = 'none';
+      canvas.style.transform = 'rotate(0deg)';
+      currentRotation = 0;
+      
+      canvas.offsetHeight;
+      canvas.style.transition = 'transform 5s cubic-bezier(0.15, 0.99, 0.35, 1)';
+
+      drawWheel();
+      renderPrizeTable();
+    }
+
     drawWheel();
   </script>
 </body>
