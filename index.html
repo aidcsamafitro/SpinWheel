@@ -5,13 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jakarta Running Festival - Spin & Win</title>
 
+  <!-- Library untuk membuat QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <style>
     :root {
       --jrf-navy: #0B192C;
       --jrf-orange: #FF6500;
-      --jrf-dark-blue: #1E3E62;
+      --jrf-blue: #1E3E62;
       --jrf-gold: #FFD700;
-      --jrf-light: #F8F9FA;
     }
 
     * {
@@ -21,198 +23,236 @@
     }
 
     body {
-      font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, var(--jrf-navy) 0%, var(--jrf-dark-blue) 100%);
+      min-height: 100vh;
+      font-family: Montserrat, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, var(--jrf-navy), var(--jrf-blue));
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       overflow-x: hidden;
       position: relative;
     }
 
     body::before {
       content: "";
-      position: absolute;
+      position: fixed;
       inset: 0;
+      pointer-events: none;
       background: repeating-linear-gradient(
         45deg,
         transparent,
         transparent 40px,
-        rgba(255, 101, 0, 0.05) 40px,
-        rgba(255, 101, 0, 0.05) 80px
+        rgba(255, 101, 0, .04) 40px,
+        rgba(255, 101, 0, .04) 80px
       );
-      z-index: 0;
-      pointer-events: none;
+    }
+
+    button {
+      font-family: inherit;
     }
 
     .admin-trigger-btn {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 10;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #aaa;
-      padding: 8px 15px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      backdrop-filter: blur(5px);
-      transition: all 0.2s;
-    }
-
-    .admin-trigger-btn:hover {
-      background: var(--jrf-orange);
+      top: 15px;
+      right: 15px;
+      z-index: 20;
+      padding: 9px 15px;
+      border-radius: 25px;
+      border: 1px solid #526176;
       color: #fff;
-      border-color: var(--jrf-orange);
+      background: rgba(255,255,255,.1);
+      cursor: pointer;
     }
 
     .container {
       position: relative;
       z-index: 1;
+      width: 100%;
+      max-width: 680px;
+      padding: 65px 18px 28px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
-      max-width: 600px;
-      width: 100%;
     }
 
     .header-logo {
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 14px;
     }
 
     .header-logo h2 {
-      font-size: 1.2rem;
-      letter-spacing: 3px;
       color: var(--jrf-orange);
-      text-transform: uppercase;
+      font-size: 1rem;
+      letter-spacing: 3px;
       font-weight: 800;
     }
 
     .header-logo h1 {
-      font-size: 2.2rem;
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
       font-weight: 900;
-      text-transform: uppercase;
-      color: #fff;
-      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      line-height: 1.1;
+      line-height: 1.15;
+      margin-top: 5px;
+      text-shadow: 0 4px 10px rgba(0,0,0,.5);
     }
 
     .counter-box {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
+      margin: 5px 0 18px;
       padding: 8px 20px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 101, 0, 0.4);
-      margin-bottom: 20px;
-      font-size: 1rem;
-      font-weight: 600;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,101,0,.4);
+      border-radius: 25px;
+      font-weight: 700;
     }
 
     .counter-box span {
       color: var(--jrf-gold);
       font-size: 1.2rem;
-      font-weight: 800;
     }
 
     .wheel-outer {
-      position: relative;
-      padding: 12px;
+      padding: 10px;
       background: linear-gradient(145deg, var(--jrf-orange), #ff8533);
       border-radius: 50%;
-      box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.5),
-        0 0 20px rgba(255, 101, 0, 0.4);
+      box-shadow: 0 10px 30px rgba(0,0,0,.5),
+                  0 0 20px rgba(255,101,0,.35);
     }
 
     .wheel-container {
+      width: min(76vw, 360px);
+      height: min(76vw, 360px);
       position: relative;
-      width: 360px;
-      height: 360px;
+    }
+
+    #wheel {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transition: transform 5s cubic-bezier(.15,.99,.35,1);
     }
 
     .pointer {
       position: absolute;
-      top: -18px;
+      top: -17px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
       border-left: 18px solid transparent;
       border-right: 18px solid transparent;
-      border-top: 32px solid #fff;
-      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
-      z-index: 10;
-    }
-
-    canvas {
-      display: block;
-      border-radius: 50%;
-      transition: transform 5s cubic-bezier(0.15, 0.99, 0.35, 1);
+      border-top: 32px solid white;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,.4));
+      z-index: 5;
     }
 
     .center-cap {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50px;
-      height: 50px;
+      transform: translate(-50%,-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
       background: var(--jrf-navy);
       border: 4px solid var(--jrf-gold);
-      border-radius: 50%;
-      z-index: 5;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      z-index: 4;
       pointer-events: none;
     }
 
-    .spin-btn {
-      margin-top: 25px;
-      padding: 15px 45px;
-      font-size: 1.2rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #fff;
-      background: linear-gradient(45deg, var(--jrf-orange), #ff3300);
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(255, 101, 0, 0.5);
-      transition: all 0.2s ease;
+    /* QR STANDBY */
+    .scan-panel {
+      margin-top: 24px;
+      width: 100%;
+      max-width: 440px;
+      padding: 18px;
+      border: 2px solid var(--jrf-orange);
+      border-radius: 20px;
+      background: rgba(11,25,44,.92);
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,.3);
     }
 
-    .spin-btn:hover {
-      transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 8px 25px rgba(255, 101, 0, 0.7);
+    .scan-panel[hidden] {
+      display: none !important;
+    }
+
+    .scan-title {
+      color: var(--jrf-gold);
+      font-weight: 900;
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .scan-instruction {
+      color: #e4eaf2;
+      font-size: .95rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    #qrcode {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      width: 280px;
+      height: 280px;
+      max-width: 100%;
+      margin: 0 auto 14px;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    #qrcode img,
+    #qrcode canvas {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .scan-status {
+      color: #c7d4e5;
+      font-size: .85rem;
+      line-height: 1.5;
+    }
+
+    .scan-status strong {
+      color: #54e38e;
+    }
+
+    .spin-btn {
+      margin-top: 20px;
+      padding: 13px 32px;
+      color: white;
+      background: linear-gradient(45deg, var(--jrf-orange), #ff3300);
+      border: none;
+      border-radius: 35px;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255,101,0,.4);
     }
 
     .spin-btn:disabled {
       background: #555;
-      box-shadow: none;
       cursor: not-allowed;
-      transform: none;
+      box-shadow: none;
     }
 
-    /* POP-UP HADIAH */
+    /* MODAL HADIAH */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(11, 25, 44, 0.88);
-      backdrop-filter: blur(10px);
+      padding: 12px;
+      background: rgba(11,25,44,.91);
+      backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
       z-index: 100;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
+      transition: opacity .3s, visibility .3s;
       overflow-y: auto;
     }
 
@@ -222,37 +262,40 @@
     }
 
     .modal-content {
-      background: linear-gradient(135deg, #1E3E62 0%, #0B192C 100%);
-      border: 3px solid var(--jrf-orange);
-      border-radius: 24px;
-      padding: 24px;
-      text-align: center;
       width: 100%;
       max-width: 500px;
       max-height: calc(100vh - 24px);
       overflow-y: auto;
-      box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.7),
-        0 0 30px rgba(255, 101, 0, 0.3);
-      transform: scale(0.3);
-      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      padding: 24px;
+      text-align: center;
+      border: 3px solid var(--jrf-orange);
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--jrf-blue), var(--jrf-navy));
+      box-shadow: 0 20px 50px rgba(0,0,0,.7);
+      transform: scale(.8);
+      transition: transform .3s;
     }
 
     .modal-overlay.active .modal-content {
       transform: scale(1);
     }
 
-    /* GAMBAR HADIAH DIPERBESAR */
+    .modal-title {
+      color: #ddd;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
     .prize-img-container {
       width: 320px;
       height: 320px;
       max-width: 100%;
-      margin: 15px auto 18px;
-      border-radius: 20px;
+      margin: 15px auto;
       border: 3px solid var(--jrf-gold);
+      border-radius: 18px;
+      background: var(--jrf-navy);
       overflow: hidden;
-      background: #0B192C;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -266,83 +309,64 @@
       padding: 5px;
     }
 
-    .modal-title {
-      font-size: 1rem;
-      letter-spacing: 2px;
-      color: #ddd;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-
     .prize-name {
+      color: var(--jrf-gold);
       font-size: 2rem;
       font-weight: 900;
-      color: var(--jrf-gold);
-      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
-      margin: 10px 0;
       text-transform: uppercase;
-      line-height: 1.2;
       overflow-wrap: anywhere;
+      margin: 10px 0;
     }
 
     .close-btn {
-      margin-top: 15px;
-      padding: 12px 35px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #fff;
+      margin-top: 12px;
+      padding: 12px 32px;
+      color: white;
       background: var(--jrf-orange);
       border: none;
       border-radius: 30px;
+      font-weight: 800;
       cursor: pointer;
-      transition: background 0.2s;
     }
 
-    .close-btn:hover {
-      background: #e05500;
-    }
-
-    /* PANEL ADMIN */
+    /* ADMIN */
     .admin-modal-content {
-      background: #0B192C;
-      border: 2px solid var(--jrf-orange);
-      border-radius: 20px;
-      padding: 25px;
-      max-width: 850px;
       width: 95%;
+      max-width: 850px;
       max-height: 85vh;
       overflow-y: auto;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-      position: relative;
+      padding: 22px;
+      border: 2px solid var(--jrf-orange);
+      border-radius: 18px;
+      background: var(--jrf-navy);
     }
 
     .admin-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 10px;
+      margin-bottom: 18px;
       padding-bottom: 10px;
+      border-bottom: 1px solid #33445a;
     }
 
     .admin-header h3 {
       color: var(--jrf-gold);
-      font-size: 1.3rem;
-      text-transform: uppercase;
+      font-size: 1.2rem;
     }
 
     .btn-close-admin {
-      background: none;
       border: none;
-      color: #fff;
-      font-size: 1.5rem;
+      background: none;
+      color: white;
+      font-size: 1.8rem;
       cursor: pointer;
     }
 
     .form-group-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
       gap: 10px;
       margin-bottom: 15px;
     }
@@ -354,217 +378,159 @@
     }
 
     .form-control label {
-      font-size: 0.8rem;
-      margin-bottom: 4px;
       color: #ccc;
+      font-size: .8rem;
+      margin-bottom: 5px;
     }
 
     .form-control input[type="text"],
     .form-control input[type="number"],
     .form-control input[type="color"] {
+      width: 100%;
       padding: 8px;
+      border: 1px solid #304763;
       border-radius: 6px;
-      border: 1px solid var(--jrf-dark-blue);
       background: #162a45;
-      color: #fff;
-      font-size: 0.9rem;
-      outline: none;
+      color: white;
       min-width: 0;
     }
 
     .form-control input[type="color"] {
       height: 38px;
-      cursor: pointer;
-      padding: 2px;
     }
 
     .admin-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .btn-add,
+    .btn-reset-default {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
     }
 
     .btn-add {
       background: #28a745;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .btn-add:hover {
-      background: #218838;
     }
 
     .btn-reset-default {
       background: #fd7e14;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .btn-reset-default:hover {
-      background: #e06d0e;
     }
 
     .prize-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 0.85rem;
+      margin-top: 10px;
+      font-size: .83rem;
     }
 
     .prize-table th,
     .prize-table td {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 8px;
+      padding: 8px 5px;
+      border: 1px solid #34465c;
       text-align: center;
       overflow-wrap: anywhere;
     }
 
     .prize-table th {
-      background: var(--jrf-dark-blue);
       color: var(--jrf-gold);
+      background: var(--jrf-blue);
     }
 
     .action-cell {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
       justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
     }
 
     .btn-edit,
     .btn-delete {
-      color: white;
+      padding: 5px 9px;
       border: none;
-      padding: 4px 10px;
       border-radius: 4px;
+      color: white;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 0.75rem;
-      font-weight: bold;
     }
 
     .btn-edit {
       background: #17a2b8;
     }
 
-    .btn-edit:hover {
-      background: #138496;
-    }
-
     .btn-delete {
       background: #dc3545;
     }
 
-    .btn-delete:hover {
-      background: #c82333;
+    /* Input penerima data scanner */
+    #scannerInput {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 2px;
+      height: 2px;
+      opacity: .01;
+      border: 0;
+      padding: 0;
+      z-index: -1;
+      pointer-events: none;
     }
 
-    /* RESPONSIVE HP */
     @media (max-width: 600px) {
       .container {
-        padding: 75px 12px 24px;
+        padding-top: 70px;
       }
 
       .header-logo h2 {
-        font-size: 0.9rem;
-        letter-spacing: 2px;
-      }
-
-      .header-logo h1 {
-        font-size: 1.65rem;
-      }
-
-      .wheel-container {
-        width: min(78vw, 360px);
-        height: min(78vw, 360px);
-      }
-
-      #wheel {
-        width: 100%;
-        height: 100%;
+        font-size: .8rem;
       }
 
       .wheel-outer {
-        padding: 8px;
+        padding: 7px;
       }
 
-      .spin-btn {
-        padding: 13px 35px;
-        font-size: 1rem;
+      .scan-panel {
+        padding: 14px 10px;
       }
 
-      .admin-trigger-btn {
-        top: 12px;
-        right: 12px;
-      }
-
-      .modal-content {
-        padding: 18px 14px;
-        border-radius: 20px;
+      #qrcode {
+        width: min(72vw, 250px);
+        height: min(72vw, 250px);
       }
 
       .prize-img-container {
         width: min(76vw, 280px);
         height: min(76vw, 280px);
-        margin: 12px auto 15px;
-        border-radius: 16px;
       }
 
       .prize-name {
         font-size: 1.6rem;
       }
 
-      .modal-title {
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-      }
-
-      .close-btn {
-        padding: 11px 28px;
-        font-size: 0.9rem;
+      .modal-content {
+        padding: 17px 12px;
       }
 
       .admin-modal-content {
-        padding: 15px 10px;
+        padding: 14px 9px;
       }
 
       .prize-table {
-        font-size: 0.72rem;
-      }
-
-      .prize-table th,
-      .prize-table td {
-        padding: 5px 3px;
+        font-size: .7rem;
       }
     }
 
     @media (max-height: 650px) {
-      .modal-content {
-        padding-top: 12px;
-        padding-bottom: 12px;
-      }
-
       .prize-img-container {
-        width: min(45vh, 260px);
-        height: min(45vh, 260px);
-        margin: 8px auto;
-      }
-
-      .prize-name {
-        font-size: 1.5rem;
-        margin: 6px 0;
-      }
-
-      .close-btn {
-        margin-top: 8px;
+        width: min(42vh, 240px);
+        height: min(42vh, 240px);
       }
     }
   </style>
@@ -575,11 +541,20 @@
     ⚙️ Kelola Hadiah
   </button>
 
-  <div class="container">
-    <div class="header-logo">
+  <input
+    id="scannerInput"
+    type="text"
+    autocomplete="off"
+    autocapitalize="off"
+    spellcheck="false"
+    aria-label="Input scanner QR"
+  >
+
+  <main class="container">
+    <header class="header-logo">
       <h2>OFFICIAL MERCHANDISE</h2>
       <h1>JAKARTA RUNNING FESTIVAL</h1>
-    </div>
+    </header>
 
     <div class="counter-box">
       Total Spin: <span id="spinCount">0</span>
@@ -589,21 +564,38 @@
       <div class="wheel-container">
         <div class="pointer"></div>
         <div class="center-cap"></div>
-        <canvas id="wheel" width="360" height="360"></canvas>
+        <canvas id="wheel" width="720" height="720"></canvas>
       </div>
     </div>
 
+    <!-- QR STANDBY DITAMPILKAN DI TV -->
+    <section id="scanPanel" class="scan-panel">
+      <div class="scan-title">SCAN TO SPIN!</div>
+
+      <p class="scan-instruction">
+        Arahkan scanner ke QR Code di layar ini untuk memutar roda
+        dan mendapatkan hadiah.
+      </p>
+
+      <div id="qrcode" aria-label="QR Code pemicu spin"></div>
+
+      <p class="scan-status">
+        Status: <strong id="scanStatus">MENUNGGU SCAN</strong>
+        <br>
+        Scan QR di atas untuk memulai spin.
+      </p>
+    </section>
+
+    <!-- Tombol manual untuk pengujian / cadangan -->
     <button id="spinBtn" class="spin-btn" onclick="spin()">
-      SPIN NOW
+      SPIN MANUAL
     </button>
-  </div>
+  </main>
 
   <!-- MODAL PEMENANG -->
   <div class="modal-overlay" id="prizeModal">
     <div class="modal-content">
-      <div class="modal-title" id="modalTitle">
-        SELAMAT! ANDA MENDAPATKAN
-      </div>
+      <div class="modal-title">SELAMAT! ANDA MENDAPATKAN</div>
 
       <div class="prize-img-container">
         <img
@@ -617,7 +609,7 @@
       <div class="prize-name" id="modalPrizeName">KEYCHAIN</div>
 
       <button class="close-btn" onclick="closeModal()">
-        AMBIL HADIAH
+        LANJUT PESERTA BERIKUTNYA
       </button>
     </div>
   </div>
@@ -627,50 +619,43 @@
     <div class="admin-modal-content">
       <div class="admin-header">
         <h3>Kelola Hadiah Spin Wheel</h3>
-        <button
-          class="btn-close-admin"
-          onclick="closeAdminPanel()"
-          aria-label="Tutup panel admin"
-        >&times;</button>
+        <button class="btn-close-admin" onclick="closeAdminPanel()">×</button>
       </div>
 
       <div class="form-group-grid">
         <div class="form-control">
           <label for="addName">Nama Hadiah</label>
-          <input type="text" id="addName" placeholder="Contoh: Running Shoes">
+          <input id="addName" type="text" placeholder="Nama hadiah">
         </div>
 
         <div class="form-control">
-          <label for="addQty">Stok (Qty)</label>
-          <input type="number" id="addQty" min="1" value="10">
+          <label for="addQty">Stok</label>
+          <input id="addQty" type="number" min="1" value="10">
         </div>
 
         <div class="form-control">
-          <label for="addWeight">Peluang/Win Rate (%)</label>
-          <input type="number" id="addWeight" min="0.1" step="0.1" value="5">
+          <label for="addWeight">Bobot Peluang</label>
+          <input id="addWeight" type="number" min="0.1" step="0.1" value="5">
         </div>
 
         <div class="form-control">
           <label for="addImg">Nama File Gambar</label>
-          <input type="text" id="addImg" placeholder="Contoh: shoes.jpeg">
+          <input id="addImg" type="text" placeholder="contoh: shoes.jpeg">
         </div>
 
         <div class="form-control">
           <label for="addColor">Warna Sektor</label>
-          <input type="color" id="addColor" value="#FF6500">
+          <input id="addColor" type="color" value="#FF6500">
         </div>
 
         <div class="form-control">
           <label for="addTextColor">Warna Teks</label>
-          <input type="color" id="addTextColor" value="#FFFFFF">
+          <input id="addTextColor" type="color" value="#FFFFFF">
         </div>
       </div>
 
       <div class="admin-actions">
-        <button class="btn-add" onclick="addNewPrize()">
-          + Tambah Hadiah
-        </button>
-
+        <button class="btn-add" onclick="addNewPrize()">+ Tambah Hadiah</button>
         <button class="btn-reset-default" onclick="resetToDefaultData()">
           Reset ke Default
         </button>
@@ -681,7 +666,7 @@
           <tr>
             <th>Nama</th>
             <th>Stok</th>
-            <th>Percentage (%)</th>
+            <th>Peluang</th>
             <th>Gambar</th>
             <th>Aksi</th>
           </tr>
@@ -692,7 +677,137 @@
   </div>
 
   <script>
-    // SEMUA GAMBAR DEFAULT MENGGUNAKAN .jpeg
+    // =====================================================
+    // KONFIGURASI QR SCAN-TO-SPIN
+    // =====================================================
+
+    // Isi QR yang akan dibaca scanner.
+    // Jika nilainya berubah, QR di layar juga ikut berubah.
+    const QR_TRIGGER_CODE = "JRF-SPIN-2026";
+
+    // Waktu minimum sebelum kode yang sama boleh memicu spin lagi.
+    const SCAN_COOLDOWN_MS = 1800;
+
+    const scannerInput = document.getElementById("scannerInput");
+    const scanPanel = document.getElementById("scanPanel");
+    const scanStatus = document.getElementById("scanStatus");
+
+    let lastScanTime = 0;
+    let lastScannedCode = "";
+    let lastScannedAt = 0;
+    let qrReady = false;
+
+    function setScanStatus(message, isReady = false) {
+      scanStatus.textContent = message;
+      scanStatus.style.color = isReady ? "#54e38e" : "#FFD700";
+    }
+
+    function showScanStandby(show) {
+      scanPanel.hidden = !show;
+
+      if (show) {
+        setScanStatus("MENUNGGU SCAN", true);
+        focusScanner();
+      }
+    }
+
+    function focusScanner() {
+      if (
+        !isSpinning &&
+        !prizeModal.classList.contains("active") &&
+        !adminModal.classList.contains("active")
+      ) {
+        scannerInput.focus({ preventScroll: true });
+      }
+    }
+
+    function createTriggerQR() {
+      const qrElement = document.getElementById("qrcode");
+      qrElement.innerHTML = "";
+
+      if (typeof QRCode === "undefined") {
+        setScanStatus("QR gagal dimuat. Periksa koneksi internet.");
+        qrElement.textContent = "QR Code tidak dapat dibuat";
+        return;
+      }
+
+      new QRCode(qrElement, {
+        text: QR_TRIGGER_CODE,
+        width: 260,
+        height: 260,
+        colorDark: "#000000",
+        colorLight: "#FFFFFF",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      qrReady = true;
+    }
+
+    // Scanner biasanya mengirim karakter kode lalu Enter.
+    // Website hanya menerima kode pemicu yang cocok.
+    scannerInput.addEventListener("keydown", function(event) {
+      if (event.key !== "Enter") return;
+
+      event.preventDefault();
+
+      const scannedCode = scannerInput.value.trim();
+      scannerInput.value = "";
+
+      if (!scannedCode) return;
+
+      handleScannedCode(scannedCode);
+    });
+
+    function handleScannedCode(code) {
+      const now = Date.now();
+
+      // Jangan terima scan ketika roda / modal sedang aktif.
+      if (
+        isSpinning ||
+        prizeModal.classList.contains("active") ||
+        adminModal.classList.contains("active")
+      ) {
+        return;
+      }
+
+      // Debounce untuk mencegah satu hasil scan memicu dua kali.
+      if (
+        code === lastScannedCode &&
+        now - lastScannedAt < SCAN_COOLDOWN_MS
+      ) {
+        return;
+      }
+
+      lastScannedCode = code;
+      lastScannedAt = now;
+
+      if (code !== QR_TRIGGER_CODE) {
+        setScanStatus("QR TIDAK VALID — COBA LAGI");
+        setTimeout(() => {
+          if (!isSpinning && !prizeModal.classList.contains("active")) {
+            setScanStatus("MENUNGGU SCAN", true);
+            focusScanner();
+          }
+        }, 1200);
+        return;
+      }
+
+      lastScanTime = now;
+      setScanStatus("QR BERHASIL — SPIN DIMULAI");
+      spin();
+    }
+
+    // Menjaga input scanner tetap siap setelah jendela browser aktif.
+    window.addEventListener("focus", focusScanner);
+
+    document.addEventListener("visibilitychange", function() {
+      if (!document.hidden) focusScanner();
+    });
+
+    // =====================================================
+    // DATA HADIAH
+    // =====================================================
+
     const defaultPrizes = [
       {
         name: "Keychain",
@@ -730,51 +845,14 @@
 
     const STORAGE_KEY = "jrf_prizes_v6";
 
-    // UBAH SEMUA EKSTENSI GAMBAR MENJADI .jpeg
-    // Contoh: gambar.jpg -> gambar.jpeg
-    //         gambar.png -> gambar.jpeg
-    //         gambar    -> gambar.jpeg
     function normalizeImageName(filename) {
       let name = String(filename || "keychain.jpeg").trim();
-
-      // Buang awalan path relatif
       name = name.replace(/^\.\/+/, "");
-
-      // Ubah ekstensi gambar yang umum menjadi .jpeg
       name = name.replace(/\.(jpe?g|png|webp|gif|bmp|avif)$/i, "");
-
-      // Pastikan tidak ada ekstensi lama yang tersisa
       name = name.replace(/\.+$/, "");
-
       return name + ".jpeg";
     }
 
-    // AMBIL ELEMEN HTML
-    const canvas = document.getElementById("wheel");
-    const ctx = canvas.getContext("2d");
-    const spinBtn = document.getElementById("spinBtn");
-    const spinCountDisplay = document.getElementById("spinCount");
-    const prizeModal = document.getElementById("prizeModal");
-    const adminModal = document.getElementById("adminModal");
-    const modalPrizeName = document.getElementById("modalPrizeName");
-    const modalPrizeImg = document.getElementById("modalPrizeImg");
-
-    // GAMBAR CADANGAN JIKA FILE TIDAK DITEMUKAN
-    const svgFallbacks = {
-      "Keychain":
-        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231E3E62'/><circle cx='50' cy='35' r='12' fill='none' stroke='%23FFD700' stroke-width='4'/><path d='M50 47 L50 75' stroke='%23FFD700' stroke-width='4'/><rect x='42' y='75' width='16' height='12' rx='3' fill='%23FF6500'/><text x='50' y='93' font-size='8' fill='%23FFF' text-anchor='middle' font-weight='bold'>KEYCHAIN</text></svg>",
-
-      "Running Sunglasses":
-        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23FF6500'/><path d='M20 45 Q50 35 80 45 L75 60 Q50 50 25 60 Z' fill='%230B192C'/><circle cx='35' cy='52' r='10' fill='%23FFD700'/><circle cx='65' cy='52' r='10' fill='%23FFD700'/><text x='50' y='85' font-size='7' fill='%23FFF' text-anchor='middle' font-weight='bold'>SUNGLASSES</text></svg>",
-
-      "Sports Water Bottle":
-        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B192C'/><rect x='40' y='20' width='20' height='8' fill='%23FF6500'/><rect x='35' y='28' width='30' height='55' rx='5' fill='%231E3E62' stroke='%23FFD700' stroke-width='2'/><text x='50' y='92' font-size='7' fill='%23FFF' text-anchor='middle' font-weight='bold'>WATER BOTTLE</text></svg>",
-
-      "Portable Sports Towel":
-        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231E3E62'/><rect x='25' y='30' width='50' height='45' rx='4' fill='%23FF6500'/><path d='M25 40 L75 40' stroke='%23FFD700' stroke-width='3'/><text x='50' y='88' font-size='8' fill='%23FFF' text-anchor='middle' font-weight='bold'>TOWEL</text></svg>"
-    };
-
-    // MUAT DATA LAMA DAN SERAGAMKAN NAMA FILE GAMBAR
     let storedPrizes = null;
 
     try {
@@ -792,66 +870,83 @@
       color: prize.color || "#1E3E62",
       textColor: prize.textColor || "#FFFFFF",
       image: normalizeImageName(prize.image),
-      qty: Number(prize.qty) || 0,
-      weight: Number(prize.weight) || 5
+      qty: Math.max(0, Number(prize.qty) || 0),
+      weight: Number(prize.weight) > 0 ? Number(prize.weight) : 5
     }));
-
-    // COUNTER SPIN HARIAN
-    const todayDate = new Date().toISOString().split("T")[0];
-    const lastSpinDate = localStorage.getItem("jrf_lastSpinDate");
-
-    let totalSpins = 0;
-
-    if (lastSpinDate === todayDate) {
-      totalSpins = parseInt(localStorage.getItem("jrf_totalSpins"), 10) || 0;
-    } else {
-      totalSpins = 0;
-      localStorage.setItem("jrf_lastSpinDate", todayDate);
-      localStorage.setItem("jrf_totalSpins", "0");
-    }
 
     prizes = prizes.filter(prize => prize.qty > 0);
 
+    const todayDate = new Date().toISOString().split("T")[0];
+    const lastSpinDate = localStorage.getItem("jrf_lastSpinDate");
+
+    let totalSpins = lastSpinDate === todayDate
+      ? parseInt(localStorage.getItem("jrf_totalSpins"), 10) || 0
+      : 0;
+
+    localStorage.setItem("jrf_lastSpinDate", todayDate);
+
+    // =====================================================
+    // ELEMEN DAN STATE
+    // =====================================================
+
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spinBtn");
+    const spinCountDisplay = document.getElementById("spinCount");
+    const prizeModal = document.getElementById("prizeModal");
+    const adminModal = document.getElementById("adminModal");
+    const modalPrizeName = document.getElementById("modalPrizeName");
+    const modalPrizeImg = document.getElementById("modalPrizeImg");
+
     let currentRotation = 0;
-    let lastWonPrize = null;
     let isSpinning = false;
+    let lastWonPrize = null;
     let soundInterval = null;
 
-    spinCountDisplay.innerText = totalSpins;
+    spinCountDisplay.textContent = totalSpins;
 
+    // =====================================================
     // SIMPAN DATA
+    // =====================================================
+
     function saveToStorage() {
-      // Seragamkan kembali sebelum disimpan
       prizes = prizes.map(prize => ({
         ...prize,
         image: normalizeImageName(prize.image)
       }));
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(prizes));
-      localStorage.setItem("jrf_totalSpins", totalSpins.toString());
+      localStorage.setItem("jrf_totalSpins", String(totalSpins));
       localStorage.setItem("jrf_lastSpinDate", todayDate);
     }
 
+    // =====================================================
     // AUDIO
+    // =====================================================
+
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     const audioCtx = AudioContextClass ? new AudioContextClass() : null;
 
     function playTickSound() {
       if (!audioCtx) return;
 
-      if (audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
 
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
 
       osc.type = "triangle";
       osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.04);
+      osc.frequency.exponentialRampToValueAtTime(
+        100,
+        audioCtx.currentTime + 0.04
+      );
 
       gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+      gain.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioCtx.currentTime + 0.04
+      );
 
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -863,14 +958,10 @@
     function playWinSound() {
       if (!audioCtx) return;
 
-      if (audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
 
       const now = audioCtx.currentTime;
-      const notes = [261.63, 329.63, 392.00, 523.25];
-
-      notes.forEach((freq, index) => {
+      [261.63, 329.63, 392, 523.25].forEach((freq, index) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         const startTime = now + index * 0.1;
@@ -888,37 +979,29 @@
       });
     }
 
-    // PENANGANAN GAMBAR GAGAL DIMUAT
-    function handleImageError(imgElement) {
-      if (imgElement.dataset.fallbackUsed === "true") {
-        return;
-      }
-
-      imgElement.dataset.fallbackUsed = "true";
-
-      const prizeName = modalPrizeName.innerText.trim();
-      const fallback = svgFallbacks[prizeName];
-
-      if (fallback) {
-        imgElement.src = fallback;
-      } else {
-        imgElement.src =
-          "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230B192C'/><text x='50' y='55' font-size='10' fill='%23FFD700' text-anchor='middle'>PRIZE</text></svg>";
-      }
-    }
-
+    // =====================================================
     // GAMBAR RODA
+    // =====================================================
+
     function drawWheel() {
-      const numSlices = prizes.length;
+      const radius = canvas.width / 2;
+      const count = prizes.length;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (numSlices === 0) return;
+      if (!count) {
+        ctx.fillStyle = "#0B192C";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.textAlign = "center";
+        ctx.font = "bold 28px Arial";
+        ctx.fillText("STOK HABIS", radius, radius);
+        return;
+      }
 
-      const sliceAngle = (2 * Math.PI) / numSlices;
-      const radius = canvas.width / 2;
+      const sliceAngle = (2 * Math.PI) / count;
 
-      for (let i = 0; i < numSlices; i++) {
+      for (let i = 0; i < count; i++) {
         const startAngle = i * sliceAngle;
         const endAngle = startAngle + sliceAngle;
 
@@ -930,59 +1013,89 @@
         ctx.fillStyle = prizes[i].color;
         ctx.fill();
 
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(255,255,255,.3)";
+        ctx.lineWidth = 3;
         ctx.stroke();
 
         ctx.save();
         ctx.translate(radius, radius);
         ctx.rotate(startAngle + sliceAngle / 2);
+
         ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
         ctx.fillStyle = prizes[i].textColor;
-        ctx.font = "bold 13px 'Montserrat', sans-serif";
-        ctx.fillText(prizes[i].name, radius - 15, 5, radius - 25);
+        ctx.font = "bold 25px Arial";
+
+        let label = prizes[i].name;
+        const maxWidth = radius * 0.68;
+
+        while (
+          label.length > 4 &&
+          ctx.measureText(label).width > maxWidth
+        ) {
+          label = label.slice(0, -1);
+        }
+
+        if (label !== prizes[i].name) label += "…";
+
+        ctx.fillText(label, radius - 24, 0, maxWidth);
         ctx.restore();
       }
     }
 
-    // MENENTUKAN PEMENANG BERDASARKAN BOBOT
+    // =====================================================
+    // PEMENANG DAN SPIN
+    // =====================================================
+
     function getPrizeIndex() {
-      if (prizes.length === 0) return -1;
+      const totalWeight = prizes.reduce(
+        (sum, prize) => sum + prize.weight,
+        0
+      );
 
-      const totalWeight = prizes.reduce((sum, prize) => sum + prize.weight, 0);
-      if (totalWeight <= 0) return -1;
+      if (totalWeight <= 0 || !prizes.length) return -1;
 
-      let randomVal = Math.random() * totalWeight;
+      let randomValue = Math.random() * totalWeight;
 
       for (let i = 0; i < prizes.length; i++) {
-        if (randomVal < prizes[i].weight) return i;
-        randomVal -= prizes[i].weight;
+        if (randomValue < prizes[i].weight) return i;
+        randomValue -= prizes[i].weight;
       }
 
       return prizes.length - 1;
     }
 
-    // SPIN
     function spin() {
       if (isSpinning) return;
 
-      if (prizes.length === 0) {
+      if (prizeModal.classList.contains("active")) return;
+      if (adminModal.classList.contains("active")) return;
+
+      if (!prizes.length) {
+        setScanStatus("STOK HADIAH HABIS");
         alert("Maaf, semua stok hadiah telah habis!");
         return;
       }
 
       const winningIndex = getPrizeIndex();
 
-      if (winningIndex === -1) {
-        alert("Maaf, semua stok hadiah telah habis!");
+      if (winningIndex < 0) {
+        alert("Tidak ada hadiah yang tersedia.");
         return;
       }
 
       isSpinning = true;
       spinBtn.disabled = true;
 
+      showScanStandby(false);
+      setScanStatus("RODA SEDANG BERPUTAR");
+
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+
       totalSpins++;
-      spinCountDisplay.innerText = totalSpins;
+      spinCountDisplay.textContent = totalSpins;
 
       const winningPrize = prizes[winningIndex];
       winningPrize.qty--;
@@ -991,38 +1104,23 @@
       saveToStorage();
 
       const degreesPerSlice = 360 / prizes.length;
-
       const targetDegree =
         360 -
-        (winningIndex * degreesPerSlice) -
-        (degreesPerSlice / 2) -
+        winningIndex * degreesPerSlice -
+        degreesPerSlice / 2 -
         90;
 
       const extraRounds = 360 * 6;
-
       const nextRotation =
         currentRotation +
         extraRounds +
         ((targetDegree - (currentRotation % 360) + 360) % 360);
 
       if (soundInterval) clearInterval(soundInterval);
-
       soundInterval = setInterval(playTickSound, 150);
 
-      setTimeout(() => {
-        if (soundInterval) clearInterval(soundInterval);
-        soundInterval = setInterval(playTickSound, 300);
-      }, 3000);
-
-      setTimeout(() => {
-        if (soundInterval) {
-          clearInterval(soundInterval);
-          soundInterval = null;
-        }
-      }, 4500);
-
+      canvas.style.transform = `rotate(${nextRotation}deg)`;
       currentRotation = nextRotation;
-      canvas.style.transform = `rotate(${currentRotation}deg)`;
 
       setTimeout(() => {
         if (soundInterval) {
@@ -1038,89 +1136,117 @@
       }, 5000);
     }
 
-    // TAMPILKAN HADIAH
+    // =====================================================
+    // POP-UP HADIAH
+    // =====================================================
+
+    const svgFallbacks = {
+      "Keychain":
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><rect width='300' height='300' fill='%231E3E62'/><circle cx='150' cy='100' r='35' fill='none' stroke='%23FFD700' stroke-width='10'/><path d='M150 135 L150 225' stroke='%23FFD700' stroke-width='10'/><text x='150' y='275' font-size='22' fill='white' text-anchor='middle'>KEYCHAIN</text></svg>",
+
+      "Running Sunglasses":
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><rect width='300' height='300' fill='%23FF6500'/><path d='M35 120 Q150 75 265 120 L245 180 Q200 195 170 155 L130 155 Q100 195 55 180 Z' fill='%230B192C'/><text x='150' y='260' font-size='20' fill='white' text-anchor='middle'>SUNGLASSES</text></svg>",
+
+      "Sports Water Bottle":
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><rect width='300' height='300' fill='%230B192C'/><rect x='125' y='40' width='50' height='25' fill='%23FF6500'/><rect x='90' y='65' width='120' height='175' rx='18' fill='%231E3E62' stroke='%23FFD700' stroke-width='7'/><text x='150' y='275' font-size='18' fill='white' text-anchor='middle'>WATER BOTTLE</text></svg>",
+
+      "Portable Sports Towel":
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><rect width='300' height='300' fill='%231E3E62'/><rect x='55' y='60' width='190' height='165' rx='12' fill='%23FF6500'/><path d='M55 105 L245 105' stroke='%23FFD700' stroke-width='10'/><text x='150' y='270' font-size='22' fill='white' text-anchor='middle'>SPORTS TOWEL</text></svg>"
+    };
+
+    function handleImageError(img) {
+      if (img.dataset.fallbackUsed === "true") return;
+
+      img.dataset.fallbackUsed = "true";
+
+      const fallback = svgFallbacks[modalPrizeName.textContent.trim()];
+
+      img.src = fallback ||
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><rect width='300' height='300' fill='%230B192C'/><text x='150' y='160' font-size='28' fill='%23FFD700' text-anchor='middle'>HADIAH</text></svg>";
+    }
+
     function showPrizeModal(prize) {
       playWinSound();
 
-      modalPrizeName.innerText = prize.name;
+      modalPrizeName.textContent = prize.name;
       modalPrizeImg.dataset.fallbackUsed = "false";
       modalPrizeImg.alt = prize.name;
-
-      // Semua gambar otomatis dipanggil dengan ekstensi .jpeg
       modalPrizeImg.src = "./" + normalizeImageName(prize.image);
 
       prizeModal.classList.add("active");
     }
 
-    // TUTUP POP-UP HADIAH
     function closeModal() {
       prizeModal.classList.remove("active");
 
       if (lastWonPrize && lastWonPrize.qty <= 0) {
         alert(
-          `Perhatian: Stok hadiah "${lastWonPrize.name}" telah HABIS! Item langsung dihapus dari roda.`
+          `Stok hadiah "${lastWonPrize.name}" telah habis dan dihapus dari roda.`
         );
 
         prizes = prizes.filter(prize => prize.qty > 0);
-
         saveToStorage();
         resetWheelAnimation();
       }
 
       lastWonPrize = null;
+
+      if (prizes.length) {
+        showScanStandby(true);
+        setScanStatus("MENUNGGU PESERTA BERIKUTNYA", true);
+      } else {
+        showScanStandby(false);
+        setScanStatus("STOK HADIAH HABIS");
+        alert("Semua hadiah telah habis.");
+      }
     }
 
+    // =====================================================
     // ADMIN
+    // =====================================================
+
     function openAdminPanel() {
       const pin = prompt("Masukkan PIN Keamanan Admin:");
 
       if (pin === "1234") {
-        renderPrizeTable();
         adminModal.classList.add("active");
+        renderPrizeTable();
       } else if (pin !== null) {
-        alert("PIN Salah! Akses ditolak.");
+        alert("PIN salah. Akses ditolak.");
       }
     }
 
     function closeAdminPanel() {
       adminModal.classList.remove("active");
+      focusScanner();
     }
 
-    // TABEL HADIAH
     function renderPrizeTable() {
       const tbody = document.getElementById("prizeTableBody");
       tbody.innerHTML = "";
 
-      const totalWeight = prizes.reduce((sum, prize) => sum + prize.weight, 0);
+      const totalWeight = prizes.reduce(
+        (sum, prize) => sum + prize.weight,
+        0
+      );
 
       prizes.forEach((prize, index) => {
-        const percentage =
-          totalWeight > 0
-            ? ((prize.weight / totalWeight) * 100).toFixed(1)
-            : "0.0";
-
         const tr = document.createElement("tr");
+        const percentage = totalWeight
+          ? ((prize.weight / totalWeight) * 100).toFixed(1)
+          : "0.0";
 
         const nameCell = document.createElement("td");
-        nameCell.style.textAlign = "left";
-
-        const strong = document.createElement("strong");
-        strong.textContent = prize.name;
-        nameCell.appendChild(strong);
+        nameCell.textContent = prize.name;
 
         const qtyCell = document.createElement("td");
         qtyCell.textContent = prize.qty;
 
-        const percentageCell = document.createElement("td");
-        percentageCell.textContent =
-          `${percentage}% (Bobot: ${prize.weight})`;
+        const weightCell = document.createElement("td");
+        weightCell.textContent = `${percentage}% (Bobot ${prize.weight})`;
 
         const imageCell = document.createElement("td");
-        const imageCode = document.createElement("code");
-
-        // Tampilkan nama file dengan ekstensi .jpeg
-        imageCode.textContent = normalizeImageName(prize.image);
-        imageCell.appendChild(imageCode);
+        imageCell.textContent = normalizeImageName(prize.image);
 
         const actionCell = document.createElement("td");
         actionCell.className = "action-cell";
@@ -1136,54 +1262,43 @@
         deleteButton.onclick = () => removePrize(index);
 
         actionCell.append(editButton, deleteButton);
-        tr.append(nameCell, qtyCell, percentageCell, imageCell, actionCell);
+        tr.append(nameCell, qtyCell, weightCell, imageCell, actionCell);
         tbody.appendChild(tr);
       });
     }
 
-    // EDIT HADIAH
     function editPrize(index) {
       const prize = prizes[index];
 
-      const newQtyStr = prompt(
-        `Edit Stok (Qty) untuk "${prize.name}":`,
-        prize.qty
-      );
+      const qtyText = prompt("Edit stok:", prize.qty);
+      if (qtyText === null) return;
 
-      if (newQtyStr === null) return;
-
-      const newQty = Number(newQtyStr);
-
-      if (!Number.isInteger(newQty) || newQty < 0) {
-        alert("Stok harus berupa bilangan bulat 0 atau lebih!");
+      const qty = Number(qtyText);
+      if (!Number.isInteger(qty) || qty < 0) {
+        alert("Stok harus berupa bilangan bulat 0 atau lebih.");
         return;
       }
 
-      const newWeightStr = prompt(
-        `Edit Nilai Persentase/Bobot untuk "${prize.name}":\n(Nilai lebih besar = lebih sering keluar)`,
-        prize.weight
-      );
+      const weightText = prompt("Edit bobot peluang:", prize.weight);
+      if (weightText === null) return;
 
-      if (newWeightStr === null) return;
-
-      const newWeight = parseFloat(newWeightStr);
-
-      if (!Number.isFinite(newWeight) || newWeight <= 0) {
-        alert("Nilai bobot harus lebih dari 0!");
+      const weight = Number(weightText);
+      if (!Number.isFinite(weight) || weight <= 0) {
+        alert("Bobot harus lebih dari 0.");
         return;
       }
 
-      const newImgStr = prompt(
-        `Edit Nama File Gambar untuk "${prize.name}" (otomatis menjadi .jpeg):`,
+      const imageText = prompt(
+        "Nama file gambar (otomatis menjadi .jpeg):",
         normalizeImageName(prize.image)
       );
 
-      if (newImgStr !== null && newImgStr.trim() !== "") {
-        prize.image = normalizeImageName(newImgStr);
-      }
+      prize.qty = qty;
+      prize.weight = weight;
 
-      prize.qty = newQty;
-      prize.weight = newWeight;
+      if (imageText !== null && imageText.trim()) {
+        prize.image = normalizeImageName(imageText);
+      }
 
       prizes = prizes.filter(item => item.qty > 0);
 
@@ -1191,27 +1306,26 @@
       resetWheelAnimation();
     }
 
-    // TAMBAH HADIAH
     function addNewPrize() {
       const name = document.getElementById("addName").value.trim();
-      const qty = parseInt(document.getElementById("addQty").value, 10);
-      const weight = parseFloat(document.getElementById("addWeight").value);
-      const img = document.getElementById("addImg").value.trim();
+      const qty = Number(document.getElementById("addQty").value);
+      const weight = Number(document.getElementById("addWeight").value);
+      const image = document.getElementById("addImg").value.trim();
       const color = document.getElementById("addColor").value;
       const textColor = document.getElementById("addTextColor").value;
 
       if (!name) {
-        alert("Nama hadiah tidak boleh kosong!");
+        alert("Nama hadiah wajib diisi.");
         return;
       }
 
       if (!Number.isInteger(qty) || qty <= 0) {
-        alert("Stok harus berupa bilangan bulat lebih dari 0!");
+        alert("Stok harus berupa bilangan bulat lebih dari 0.");
         return;
       }
 
       if (!Number.isFinite(weight) || weight <= 0) {
-        alert("Bobot harus berupa angka lebih dari 0!");
+        alert("Bobot harus lebih dari 0.");
         return;
       }
 
@@ -1221,7 +1335,7 @@
         weight,
         color,
         textColor,
-        image: normalizeImageName(img || "keychain.jpeg")
+        image: normalizeImageName(image || "keychain.jpeg")
       });
 
       document.getElementById("addName").value = "";
@@ -1233,38 +1347,33 @@
       resetWheelAnimation();
     }
 
-    // HAPUS HADIAH
     function removePrize(index) {
-      if (
-        confirm(
-          `Apakah Anda yakin ingin menghapus "${prizes[index].name}" dari roda spin?`
-        )
-      ) {
-        prizes.splice(index, 1);
-        saveToStorage();
-        resetWheelAnimation();
+      if (!confirm(`Hapus hadiah "${prizes[index].name}"?`)) return;
+
+      prizes.splice(index, 1);
+      saveToStorage();
+      resetWheelAnimation();
+
+      if (!prizes.length) {
+        showScanStandby(false);
+        setScanStatus("STOK HADIAH HABIS");
       }
     }
 
-    // RESET DATA DEFAULT
     function resetToDefaultData() {
-      if (
-        confirm(
-          "Apakah Anda yakin ingin mereset seluruh hadiah dan counter spin ke data awal?"
-        )
-      ) {
-        prizes = JSON.parse(JSON.stringify(defaultPrizes));
-        totalSpins = 0;
+      if (!confirm("Reset semua hadiah dan counter ke data awal?")) return;
 
-        spinCountDisplay.innerText = totalSpins;
+      prizes = JSON.parse(JSON.stringify(defaultPrizes));
+      totalSpins = 0;
 
-        localStorage.removeItem(STORAGE_KEY);
-        saveToStorage();
-        resetWheelAnimation();
-      }
+      spinCountDisplay.textContent = totalSpins;
+
+      localStorage.setItem("jrf_lastSpinDate", todayDate);
+      saveToStorage();
+      resetWheelAnimation();
+      showScanStandby(true);
     }
 
-    // RESET RODA
     function resetWheelAnimation() {
       canvas.style.transition = "none";
       canvas.style.transform = "rotate(0deg)";
@@ -1273,31 +1382,31 @@
       void canvas.offsetHeight;
 
       canvas.style.transition =
-        "transform 5s cubic-bezier(0.15, 0.99, 0.35, 1)";
+        "transform 5s cubic-bezier(.15,.99,.35,1)";
 
       drawWheel();
       renderPrizeTable();
     }
 
-    // TUTUP MODAL JIKA AREA LUAR DIKLIK
+    // Klik area luar untuk menutup modal.
     prizeModal.addEventListener("click", function(event) {
-      if (event.target === prizeModal) {
-        closeModal();
-      }
+      if (event.target === prizeModal) closeModal();
     });
 
     adminModal.addEventListener("click", function(event) {
-      if (event.target === adminModal) {
-        closeAdminPanel();
-      }
+      if (event.target === adminModal) closeAdminPanel();
     });
 
-    // SIMPAN NAMA FILE YANG SUDAH DINORMALISASI
-    saveToStorage();
+    // =====================================================
+    // INISIALISASI
+    // =====================================================
 
-    // MULAI APLIKASI
+    saveToStorage();
     drawWheel();
     renderPrizeTable();
+    createTriggerQR();
+    showScanStandby(true);
+    focusScanner();
   </script>
 </body>
 </html>
