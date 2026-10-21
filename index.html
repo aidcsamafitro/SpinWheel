@@ -7,6 +7,8 @@
 
   <!-- Library untuk membuat QR Code -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Efek confetti warna-warni -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <style>
     :root {
@@ -39,13 +41,12 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 40px,
-        rgba(255, 101, 0, .04) 40px,
-        rgba(255, 101, 0, .04) 80px
-      );
+      z-index: 0;
+      /* Simpan foto pelari dengan nama running-bg.jpeg di folder yang sama. */
+      background:
+        linear-gradient(135deg, rgba(11,25,44,.82), rgba(30,62,98,.72)),
+        url("./running-bg.jpeg") center center / cover no-repeat;
+      transform: scale(1.01);
     }
 
     button {
@@ -702,6 +703,46 @@
       scanStatus.style.color = isReady ? "#54e38e" : "#FFD700";
     }
 
+    // Confetti warna-warni: dipanggil saat QR valid dan saat hadiah muncul.
+    function launchConfetti(bigCelebration = false) {
+      if (typeof confetti !== "function") return;
+
+      if (bigCelebration) {
+        const duration = 2200;
+        const end = Date.now() + duration;
+        const colors = ["#FF6500", "#FFD700", "#1E90FF", "#54E38E", "#FF4D6D", "#FFFFFF"];
+
+        (function frame() {
+          confetti({
+            particleCount: 7,
+            angle: 60,
+            spread: 65,
+            origin: { x: 0, y: 0.65 },
+            colors,
+            scalar: 1.05
+          });
+          confetti({
+            particleCount: 7,
+            angle: 120,
+            spread: 65,
+            origin: { x: 1, y: 0.65 },
+            colors,
+            scalar: 1.05
+          });
+
+          if (Date.now() < end) requestAnimationFrame(frame);
+        })();
+      } else {
+        confetti({
+          particleCount: 90,
+          spread: 80,
+          startVelocity: 38,
+          origin: { x: 0.5, y: 0.55 },
+          colors: ["#FF6500", "#FFD700", "#1E90FF", "#54E38E", "#FF4D6D", "#FFFFFF"]
+        });
+      }
+    }
+
     function showScanStandby(show) {
       scanPanel.hidden = !show;
 
@@ -794,6 +835,7 @@
 
       lastScanTime = now;
       setScanStatus("QR BERHASIL — SPIN DIMULAI");
+      launchConfetti(false);
       spin();
     }
 
@@ -1174,6 +1216,7 @@
       modalPrizeImg.src = "./" + normalizeImageName(prize.image);
 
       prizeModal.classList.add("active");
+      launchConfetti(true);
     }
 
     function closeModal() {
